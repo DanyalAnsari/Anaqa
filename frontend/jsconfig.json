@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@app/*": [
+                "./src/app/*"
+            ],
+            "@assets/*": [
+                "./src/assets/*"
+            ],
+            "@components/*": [
+                "./src/components/*"
+            ],
+            "@config/*": [
+                "./src/config/*"
+            ],
+            "@constants/*": [
+                "./src/constants/*"
+            ],
+            "@hooks/*": [
+                "./src/features/*"
+            ],
+            "@pages/*": [
+                "./src/pages/*"
+            ],
+            "@services/*": [
+                "./src/services/*"
+            ],
+            "@styles/*": [
+                "./src/styles/*"
+            ],
+        }
+    }
+}
