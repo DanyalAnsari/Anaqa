@@ -1,14 +1,15 @@
 import multer from "multer";
 
-const storage = multer.diskStorage({
-	destination: "public/images",
-	filename: function (req, file, callback) {
-		callback(null, file.originalname);
+const upload = multer({
+	dest: "temp/", // temporary directory
+	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+	fileFilter: (req, file, cb) => {
+		if (file.mimetype.startsWith("image/")) {
+			cb(null, true);
+		} else {
+			cb(new Error("Only image files allowed"));
+		}
 	},
 });
 
-const upload = multer({
-	storage,
-});
-
-module.exports = upload;
+export default upload

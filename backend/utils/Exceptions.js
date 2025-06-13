@@ -23,3 +23,9 @@ export class ForbiddenException extends AppError {
 		super(403, message);
 	}
 }
+
+export class ValidationException extends AppError {
+	constructor(message = "Invalid Request") {
+		super(400, message);
+	}
+}
