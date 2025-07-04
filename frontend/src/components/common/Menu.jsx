@@ -1,4 +1,4 @@
-import constants from "@/constants/appConstants";
+import constants from "@/utilities/appConstants";
 import React from "react";
 import { NavLink } from "react-router";
 

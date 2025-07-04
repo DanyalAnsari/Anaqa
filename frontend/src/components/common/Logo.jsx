@@ -1,10 +1,9 @@
-import { assets } from "@/assets/assets";
 import React from "react";
 import { Link } from "react-router";
 
 const Logo = ({ className }) => (
-	<Link to={"/"}>
-		<img src={assets.logo} className={`w-24 lg:w-32 ${className}`} alt="logo" />
+	<Link to={"/"} className={`btn btn-ghost text-xl lg:text-2xl xl:text-3xl ${className}`}>
+		Anaqa
 	</Link>
 );
 

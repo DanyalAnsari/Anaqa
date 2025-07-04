@@ -17,7 +17,7 @@ const About = () => {
         <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Rem ratione nisi similique quas dolores perspiciatis odio ea distinctio placeat ipsa laudantium eaque ab, unde cum ullam. Inventore totam ad placeat?</p>
         </div>
       </div>
-        <div className="text-xl py-4">
+        <div className="text-xl py-4 text-center">
           <Title text1={'WHY'} text2={'CHOOSE US'}/>
         </div>
         <div className="flex flex-col md:flex-row text-sm mb-20">
