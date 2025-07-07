@@ -98,6 +98,8 @@ export const GridContainer = ({
 			"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6",
 		features: "grid grid-cols-1 md:grid-cols-3 gap-10",
 		categories: "grid grid-cols-2 md:grid-cols-4 gap-6",
+		grid: "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6",
+		list: "grid grid-cols-1 max-w-4xl gap-6",
 		two: "grid grid-cols-1 md:grid-cols-2 gap-6",
 		three: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
 	};
@@ -129,7 +131,7 @@ export const IconBaseContainer = ({
 	className = "",
 	children,
 	hoverEffect = "scale-105",
-	margin="mx-auto",
+	margin = "mx-auto",
 	...props
 }) => {
 	return (
@@ -139,6 +141,15 @@ export const IconBaseContainer = ({
 		>
 			{children}
 		</div>
+	);
+};
+
+export const FilterInputsContainer = ({ title, children }) => {
+	return (
+		<fieldset className="space-y-3 fieldset bg-base-200 border-base-300 rounded-box border p-4">
+			<legend className="fieldset-legend text-sm">{title}</legend>
+			{children}
+		</fieldset>
 	);
 };
 

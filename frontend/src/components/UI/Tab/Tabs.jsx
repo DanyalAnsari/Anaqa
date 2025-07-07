@@ -1,10 +1,10 @@
 import React from "react";
-import { useProducts } from "@/app/hooks/useProducts";
+import { useProductWidget } from "@/app/hooks/useProducts";
 import { SectionHeader } from "@/components/common/Headers";
 import ProductsGridContainer from "../ProductsGridContainer";
 
 export const LatestProductsSection = () => {
-	const { isError, isLoading, error, products } = useProducts({
+	const { isError, isLoading, error, products } = useProductWidget({
 		sort: "-createdAt",
 		limit: 8,
 	});
@@ -28,7 +28,7 @@ export const LatestProductsSection = () => {
 };
 
 export const BestsellingProductSection = () => {
-	const { isError, isLoading, error, products } = useProducts({
+	const { isError, isLoading, error, products } = useProductWidget({
 		bestseller: true,
 		sort: "-createdAt",
 		limit: 8,
@@ -54,7 +54,7 @@ export const BestsellingProductSection = () => {
 };
 
 export const FeaturedProductSection = () => {
-	const { isError, isLoading, error, products } = useProducts({
+	const { isError, isLoading, error, products } = useProductWidget({
 		featured: true,
 		sort: "-createdAt",
 		limit: 8,

@@ -1,10 +1,24 @@
 import React from "react";
 
 // Badge Components
-export const FloatingBadge = ({ className = "", children, ...props }) => {
+export const FloatingBadge = ({
+	className = "",
+	variant = "accent",
+	size = "small",
+	children,
+	...props
+}) => {
+	const variants = {
+		accent: "bg-accent text-accent-content",
+		success: "bg-success text-success-content",
+	};
+	const sizes = {
+		small: "text-sm font-bold px-4 py-2",
+		xs: " text-xs font-semibold px-2 py-1",
+	};
 	return (
 		<div
-			className={`absolute z-20 bg-accent text-accent-content px-4 py-2 rounded-lg text-sm font-bold shadow-lg backdrop-blur-sm ${className}`}
+			className={`absolute z-20 ${variants[variant]}  rounded-lg ${sizes[size]} shadow-lg backdrop-blur-sm ${className}`}
 			{...props}
 		>
 			{children}
@@ -42,7 +56,7 @@ export const StatusBadge = ({
 
 	return (
 		<span
-			className={`badge px-3 py-2 font-semibold text-xs ${typeClasses[type]} ${className}`}
+			className={`badge px-3 py-2 font-medium text-xs ${typeClasses[type]} ${className}`}
 			{...props}
 		>
 			{children}

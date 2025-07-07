@@ -1,18 +1,18 @@
 import React from "react";
-import Badge from "@/components/common/Badge";
 import Divider from "@/components/common/Divider";
 import { H1 } from "@/components/common/typography/Headings";
 import { TextBody } from "@/components/common/typography/Text";
 import { FlexContainer } from "@/components/layouts/containers/Container";
+import { StatusBadge } from "@/components/common/typography/Badge";
 
 const Heading = () => {
 	return (
 		<div className="mb-8">
 			<FlexContainer className="lg:justify-start gap-3 mb-6">
 				<Divider variant={"end"} className="bg-secondary" />
-				<Badge className="badge-lg bg-secondary/10 text-secondary border-secondary/20">
+				<StatusBadge type="secondary" className="badge-lg">
 					Spring 2025
-				</Badge>
+				</StatusBadge>
 			</FlexContainer>
 
 			<H1 className="mb-6">

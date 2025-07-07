@@ -1,14 +1,28 @@
 import React from "react";
 
-const Button = ({ className = "", variant = "primary", action, children }) => {
+const Button = ({
+	className = "",
+	variant = "primary",
+	animated = false,
+	action,
+	children,
+	...props
+}) => {
 	action = action || (() => {});
 	const buttonClass = variation[variant] || variation.primary;
 	return (
-		<button className={`${buttonClass} ${className}`} onClick={action}>
+		<button
+			className={`${buttonClass} ${animated ? animation : ""} ${className}`}
+			onClick={action}
+			{...props}
+		>
 			{children}
 		</button>
 	);
 };
+
+const animation =
+	"opacity-0 group-hover:opacity-100 transform transition-all duration-300";
 
 const variation = {
 	primary: "btn btn-primary btn-lg group border-0 shadow-md hover:shadow-lg",

@@ -1,83 +1,40 @@
+import { Search } from "lucide-react";
 import React from "react";
 
 // Input Components
-export const Input = ({ className = "", label, error, ...props }) => {
+export const Input = ({ className = "", label, ...props }) => {
 	return (
-		<div className="form-control w-full">
-			{label && (
-				<label className="label">
-					<span className="label-text text-sm font-medium text-primary">
-						{label}
-					</span>
-				</label>
-			)}
+		<label className="floating-label">
 			<input
-				className={`input input-bordered w-full bg-base-100 border-base-300 focus:border-primary focus:outline-none ${
-					error ? "input-error" : ""
-				} ${className}`}
+				className={`input input-md focus:border-primary focus:outline-none ${className}`}
 				{...props}
 			/>
-			{error && (
-				<label className="label">
-					<span className="label-text-alt text-error text-xs">{error}</span>
-				</label>
-			)}
-		</div>
+			{label && <span>{label}</span>}
+		</label>
 	);
 };
 
-export const SearchInput = ({
-	className = "",
-	placeholder = "Search...",
-	...props
-}) => {
+export const SearchInput = ({ className = "", ...props }) => {
 	return (
-		<div className="relative">
-			<input
-				className={`input input-bordered w-full bg-base-100 border-base-300 focus:border-primary focus:outline-none pl-10 ${className}`}
-				placeholder={placeholder}
-				{...props}
-			/>
-			<div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					className="h-4 w-4"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2}
-						d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-					/>
-				</svg>
-			</div>
-		</div>
+		<label
+			className={`input input-md focus:border-primary focus:outline-0 ${className}`}
+		>
+			<span className="label">
+				<Search className="w-4 h-4 text-neutral" />
+			</span>
+			<input type="text" {...props} />
+		</label>
 	);
 };
 
-export const Select = ({
-	className = "",
-	label,
-	error,
-	options = [],
-	...props
-}) => {
+export const Select = ({ className = "", label, options = [], ...props }) => {
 	return (
-		<div className="form-control w-full">
+		<label className="label">
 			{label && (
-				<label className="label">
-					<span className="label-text text-sm font-medium text-primary">
-						{label}
-					</span>
-				</label>
+				<span className="text-sm font-medium text-primary">{label}</span>
 			)}
 			<select
-				className={`select select-bordered w-full bg-base-100 border-base-300 focus:border-primary focus:outline-none ${
-					error ? "select-error" : ""
-				} ${className}`}
+				className={`select rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${className}`}
 				{...props}
 			>
 				{options.map((option, index) => (
@@ -86,12 +43,7 @@ export const Select = ({
 					</option>
 				))}
 			</select>
-			{error && (
-				<label className="label">
-					<span className="label-text-alt text-error text-xs">{error}</span>
-				</label>
-			)}
-		</div>
+		</label>
 	);
 };
 
@@ -108,7 +60,7 @@ export const TabContainer = ({ className = "", children, ...props }) => {
 	);
 };
 
-export const Tab = ({ className = "", active = false, children, ...props }) => {
+export const Tab = ({ className = "", children, ...props }) => {
 	return (
 		<input
 			type="radio"
@@ -176,28 +128,26 @@ export const StarRating = ({
 	size = "sm",
 	...props
 }) => {
-	const sizeClasses = {
-		xs: "w-3 h-3",
-		sm: "w-4 h-4",
-		md: "w-5 h-5",
-		lg: "w-6 h-6",
+	const sizes = {
+		xs: "rating-xs",
+		sm: "rating-sm",
+		md: "rating-md",
+		lg: "rating-lg",
 	};
 
 	return (
-		<div className={`flex items-center gap-1 ${className}`} {...props}>
-			{[...Array(maxRating)].map((_, index) => (
-				<svg
-					key={index}
-					className={`${sizeClasses[size]} ${
-						index < rating
-							? "text-warning fill-current"
-							: "text-base-300 fill-current"
-					}`}
-					viewBox="0 0 24 24"
-				>
-					<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-				</svg>
-			))}
+		<div className={`rating ${sizes[size]}`}>
+			{[...Array(maxRating)].map((_, index) => {
+				return (
+					<div
+						key={index}
+						aria-label={`${index + 1}-star`}
+						className={`mask mask-star bg-warning ${className} `}
+						aria-current={`${rating === index + 1}`}
+						{...props}
+					></div>
+				);
+			})}
 		</div>
 	);
 };

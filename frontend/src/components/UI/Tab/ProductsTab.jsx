@@ -15,15 +15,15 @@ const ProductsTab = () => {
 	const Tabs = [
 		{
 			label: "Latest Products",
-			component: LatestProductsSection,
+			component: React.memo(LatestProductsSection),
 		},
 		{
 			label: "Bestselling Products",
-			component: BestsellingProductSection,
+			component: React.memo(BestsellingProductSection),
 		},
 		{
 			label: "Featured Products",
-			component: FeaturedProductSection,
+			component: React.memo(FeaturedProductSection),
 		},
 	];
 

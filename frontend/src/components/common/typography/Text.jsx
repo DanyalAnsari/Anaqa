@@ -10,7 +10,7 @@ const textBodyVariant = {
 	large: "text-lg text-neutral leading-relaxed",
 	regular: "text-base text-neutral",
 	small: "text-sm text-neutral",
-	Caption: "text-xs text-neutral",
+	caption: "text-xs text-neutral font-medium",
 	label: "text-sm font-medium text-primary",
 	badge: "text-sm font-semibold uppercase tracking-wider",
 };

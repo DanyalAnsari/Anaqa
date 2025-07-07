@@ -1,9 +1,18 @@
 import React from "react";
 
-export const ImageOverlay = ({ className = "", children, ...props }) => {
+export const ImageOverlay = ({
+	className = "",
+	variant = "main",
+	children,
+	...props
+}) => {
+	const variants = {
+		main: "from-base-content/20",
+		card: "from-primary/20 via-primary/5",
+	};
 	return (
 		<div
-			className={`absolute inset-0 bg-gradient-to-t from-base-content/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${className}`}
+			className={`absolute inset-0 bg-gradient-to-t ${variants[variant]}  to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${className}`}
 			{...props}
 		>
 			{children}
