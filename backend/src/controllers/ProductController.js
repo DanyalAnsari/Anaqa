@@ -1,193 +1,83 @@
-import ControllerErrorHandler from "#utils/helpers/ControllerErrorHandler";
 import Product from "#models/ProductModel";
+import {
+	addProductService,
+	deleteProductsService,
+	fetchAllProductsService,
+	findProductByIdService,
+} from "#services/ProductService";
 import ApiFeatures from "#utils/ApiFeatures";
-import { NotFoundException, ValidationException } from "#utils/Exceptions";
-import FileHandler from "#utils/helpers/FileHandler";
+import ControllerErrorHandler from "#utils/helpers/ControllerErrorHandler";
 
-const ProductController = {
-	// List products function
-	listProducts: ControllerErrorHandler(async (req, res, next) => {
-		// Handle text search
-		if (req.query.search) {
-			req.query.$text = { $search: req.query.search };
-			delete req.query.search;
-		}
-
-		const features = new ApiFeatures(Product.find(), req.query)
-			.filter()
-			.sort()
-			.limitFields()
-			.paginate();
-
-		const [products, totalProducts] = await Promise.all([
-			features.query.populate("category", "name").exec(),
-			Product.countDocuments(features.queryFilter || {}),
-		]);
-
-		return {
-			statusCode: 200,
-			data: {
-				products,
-				pagination: {
-					total: totalProducts,
-					page: features.page,
-					pages: Math.ceil(totalProducts / (features.limit || 10)),
-				},
-			},
-		};
-	}),
-
-	// Get products by category function
-	listProductsByCategory: ControllerErrorHandler(async (req, res, next) => {
-		const query = { categories: req.params };
-		const features = new ApiFeatures(Product.find(query), req.query)
-			.filter()
-			.sort()
-			.limitFields()
-			.paginate();
-
-		const [products, totalProducts] = await Promise.all([
-			features.query.populate("category", "name").exec(),
-			Product.countDocuments(query),
-		]);
-
-		return {
-			statusCode: 200,
-			data: {
-				products,
-				pagination: {
-					total: totalProducts,
-					page: features.page,
-					pages: Math.ceil(totalProducts / (features.limit || 10)),
-				},
-			},
-		};
-	}),
-
-	// Get product by ID function
-	getProductInfo: ControllerErrorHandler(async (req, res, next) => {
-		const product = await Product.findById(req.params.id).populate(
-			"category",
-			"name"
-		);
-
-		if (!product) {
-			throw new NotFoundException("Product not found");
-		}
-
-		return {
-			statusCode: 200,
-			data: { product },
-		};
-	}),
-
-	// Add product function
-	addProduct: ControllerErrorHandler(async (req, res, next) => {
-		const {
-			name,
-			description,
-			price,
-			discountedPrice,
-			stock,
-			category,
-			subCategory,
-			sizes,
-			bestseller = false,
-		} = req.body;
-
-		// Validate required files
-		if (!req.files || Object.keys(req.files).length === 0) {
-			throw new ValidationException("At least one product image is required");
-		}
-
-		// Save images locally
-		const imageUrls = await FileHandler._saveProductImages(req.files);
-
-		if (imageUrls.length === 0) {
-			throw new ValidationException("At least one product image is required");
-		}
-
-		// Create product
-		const product = await Product.create({
-			name,
-			description,
-			price,
-			discountedPrice,
-			stock,
-			images: imageUrls,
-			category,
-			subCategory,
-			sizes,
-			bestseller,
+export const addProductController = ControllerErrorHandler(
+	async (req, res, next) => {
+		const ProductResponse = await addProductService(req.body, req.files);
+		return (data = {
+			message: "Product created successfully",
+			ProductResponse,
 		});
+	}
+);
 
+export const fetchAllProductsController = ControllerErrorHandler(
+	async (req, res, next) => {
+		const allProductsResponse = await fetchAllProductsService();
 		return {
-			statusCode: 201,
-			data: {
-				product: {
-					id: product._id,
-					name: product.name,
-					price: product.price,
-					discountedPrice: product.discountedPrice,
-					stock: product.stock,
-					images: product.images,
-				},
-			},
+			message: "Successfully fetched all the products",
+			data: allProductsResponse,
 		};
-	}),
+	}
+);
 
-	// Update product function
-	updateProduct: ControllerErrorHandler(async (req, res, next) => {
-		const product = await Product.findById(req.params.id);
+export const fetchProducts = ControllerErrorHandler(async (req, res, next) => {
+	// Handle text search
+	if (req.query.search) {
+		req.query.$text = { $search: req.query.search };
+		delete req.query.search;
+	}
+	const features = new ApiFeatures(Product.find(), req.query)
+		.filter()
+		.sort()
+		.limitFields()
+		.paginate();
 
-		if (!product) {
-			throw new NotFoundException("Product not found");
-		}
+	const products = await features.query;
 
-		const updateData = { ...req.body };
+	// For pagination info
+	const totalProducts = await features.getCount();
+	const totalPages = Math.ceil(totalProducts / features.limit);
 
-		// Handle new image uploads
-		if (req.files && Object.keys(req.files).length > 0) {
-			const newImageUrls = await ProductController._saveProductImages(
-				req.files
-			);
+	return {
+		message: "Successfully fetched all products",
+		data: products,
+		pagination: {
+			totalProducts,
+			totalPages,
+			currentPage: features.page,
+			limit: features.limit,
+		},
+	};
+});
 
-			if (newImageUrls.length > 0) {
-				updateData.images = [...(product.images || []), ...newImageUrls];
-			}
-		}
-
-		const updatedProduct = await Product.findByIdAndUpdate(
-			req.params.id,
-			updateData,
-			{ new: true, runValidators: true }
+export const deleteProductsController = ControllerErrorHandler(
+	async (req, res, next) => {
+		const deleteProductResponse = await deleteProductsService(
+			req.params.productId
 		);
 
+		return (data = {
+			message: "Successfully deleted the products",
+			deleteProductResponse,
+		});
+	}
+);
+
+export const fetchProductByIdController = ControllerErrorHandler(
+	async (req, res, next) => {
+		const productId = req.params.productId;
+		const product = await findProductByIdService(productId);
 		return {
-			statusCode: 200,
-			data: { product: updatedProduct },
+			message: "Successfully fetched product",
+			data: product,
 		};
-	}),
-
-	// Remove product function
-	removeProduct: ControllerErrorHandler(async (req, res, next) => {
-		const product = await Product.findById(req.params.Product_Id);
-
-		if (!product) {
-			throw new NotFoundException("Product not found");
-		}
-
-		// Delete associated images
-		await ProductController._deleteProductImages(product.images);
-
-		// Delete product from database
-		await Product.findByIdAndDelete(req.params.Product_Id);
-
-		return {
-			statusCode: 204,
-			data: { success: true },
-		};
-	}),
-};
-
-export default ProductController;
+	}
+);

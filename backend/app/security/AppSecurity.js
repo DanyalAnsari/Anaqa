@@ -3,15 +3,16 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import sanitizeInput from "#middlewares/SanitizeInput";
+import { FRONTEND_URL } from "#config/appConfig";
 
 const appSecurity = (app) => {
 	// Disable the `X-Powered-By` header which could give away information about the framework and its version.
 	app.disable("x-powered-by");
 
-	// Helmet helps protect against common web exploits
+	// // Helmet helps protect against common web exploits
 	app.use(helmet());
 
-	// Optional Content Security Policy
+	// // Optional Content Security Policy
 	app.use(
 		helmet.contentSecurityPolicy({
 			directives: {
@@ -23,14 +24,11 @@ const appSecurity = (app) => {
 		})
 	);
 
-	// CORS with whitelist
-	// Split the CORS_ORIGIN environment variable into an array and also include the frontend URL
-	const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || [
-		"http://localhost:3000",
-		process.env.FRONTEND_URL.trim(),
-	];
+	// // CORS with whitelist
+	// // Split the CORS_ORIGIN environment variable into an array and also include the frontend URL
+	const allowedOrigins = FRONTEND_URL.trim();
 
-	// Use CORS middleware
+	// // Use CORS middleware
 
 	app.use(
 		cors({
@@ -46,7 +44,7 @@ const appSecurity = (app) => {
 		})
 	);
 
-	// Rate limiting middleware
+	// // Rate limiting middleware
 	app.use(
 		rateLimit({
 			// Set the time window to 15 minutes
@@ -59,10 +57,10 @@ const appSecurity = (app) => {
 		})
 	);
 
-	// HPP middleware
+	// // HPP middleware
 	app.use(hpp());
 
-	// MongoDB Sanitize middleware
+	// // MongoDB Sanitize middleware
 	app.use(sanitizeInput);
 };
 

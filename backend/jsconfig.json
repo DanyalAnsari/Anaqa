@@ -13,7 +13,10 @@
         "./config/*.env"
       ],
       "#services/*": [
-        "./services/*.js"
+        "./src/services/*.js"
+      ],
+      "#repository/*": [
+        "./src/repository/*.js"
       ],
       "#routes/*": [
         "./src/routes/*.js"

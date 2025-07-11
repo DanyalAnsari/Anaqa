@@ -1,4 +1,4 @@
-import logger from "#services/logger";
+import logger from "#utils/logger";
 import mongoose from "mongoose";
 
 const options = {

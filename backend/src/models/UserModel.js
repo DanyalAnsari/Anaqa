@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import validators from "#services/validators/MongooseValidators";
+import validators from "#utils/validators/MongooseValidators";
+import AppError from "#utils/errors/AppError";
+import {
+	BadRequestException,
+	InternalServerException,
+	UnauthorizedException,
+} from "#utils/errors/Exceptions";
 
 const userSchema = new mongoose.Schema(
 	{
@@ -16,7 +22,6 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: [true, "Please enter your email"],
 			unique: true,
-			index: true,
 			trim: true,
 			lowercase: true,
 			validate: [validators.isEmail, "Please enter a valid email"],
@@ -30,7 +35,7 @@ const userSchema = new mongoose.Schema(
 		role: {
 			type: String,
 			enum: {
-				values: ["Customer", "Vendor", "Admin", "Superadmin"],
+				values: ["Customer", "Vendor", "Admin"],
 				message: "Invalid role specified",
 			},
 			default: "Customer",
@@ -54,35 +59,26 @@ userSchema.pre("save", async function (next) {
 	}
 });
 
-UserSchema.methods = {
-	// Create password reset token
-	createResetPasswordToken() {
-		const resetToken = crypto.randomBytes(32).toString("hex");
+async function comparePassword(candidatePassword) {
+	if (typeof candidatePassword !== "string") {
+		return false;
+	}
 
-		this.password_reset_token = crypto
-			.createHash("sha256")
-			.update(resetToken)
-			.digest("hex");
+	if (!this.password) {
+		return false; 
+	}
 
-		this.password_reset_token_expires = Date.now() + 10 * 60 * 1000; // 10 minutes
+	try {
+		const isMatch = await bcrypt.compare(candidatePassword, this.password);
+		return isMatch;
+	} catch (error) {
+		console.error("Password comparison error:", error);
+		return false;
+	}
+}
 
-		return resetToken;
-	},
+userSchema.methods = { comparePassword };
 
-	// Compare password for login
-	async comparePassword(candidatePassword) {
-		return await bcrypt.compare(candidatePassword, this.password);
-	},
-
-	// Check if password was changed after JWT was issued
-	async isPasswordChanged(JWTTimestamp) {
-		if (!this.updatedAt) return false;
-
-		const passwordChangeTime = parseInt(this.updatedAt.getTime() / 1000, 10);
-		return passwordChangeTime > JWTTimestamp;
-	},
-};
-
-const User = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;

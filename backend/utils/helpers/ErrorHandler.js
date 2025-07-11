@@ -3,10 +3,9 @@ const ControllerErrorHandler = (fn) => {
 		Promise.resolve(fn(req, res, next))
 			.then((response) => {
 				if (!response) return;
-				res.status(response.statusCode || 200).json({
-					success: true,
-					...response,
-				});
+				res
+					.status(response.statusCode || 200)
+					.json({ success: true, data: response.data });
 			})
 			.catch(next);
 	};

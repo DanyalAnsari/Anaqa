@@ -1,45 +1,9 @@
 import mongoose from "mongoose";
-import validators from "#services/validators/MongooseValidators"; 
-
-// Order Item Schema
-const OrderItemSchema = new mongoose.Schema({
-	product: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Product",
-		required: [true, "Product reference is required"],
-		validate: {
-			validator: validators.isValidObjectId,
-			message: "Invalid product ID format",
-		},
-	},
-	quantity: {
-		type: Number,
-		required: [true, "Quantity is required"],
-		validate: {
-			validator: validators.isPositiveNumber,
-			message: "Quantity must be greater than 0",
-		},
-	},
-	price: {
-		type: Number,
-		required: [true, "Price is required"],
-		validate: {
-			validator: validators.isPositiveNumber,
-			message: "Price must be greater than 0",
-		},
-	},
-	name: {
-		type: String,
-		required: [true, "Product name is required"],
-		trim: true,
-		minlength: [3, "Product name must be at least 3 characters"],
-		maxlength: [100, "Product name cannot exceed 100 characters"],
-	},
-});
+import validators from "#utils/validators/MongooseValidators";
 
 const orderSchema = new mongoose.Schema(
 	{
-		user: {
+		userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: [true, "User reference is required"],
@@ -48,15 +12,11 @@ const orderSchema = new mongoose.Schema(
 				message: "Invalid user ID format",
 			},
 		},
-		items: {
-			type: [OrderItemSchema],
-			required: [true, "Order must contain at least one item"],
-			validate: {
-				validator: (items) => items.length > 0,
-				message: "Order must contain at least one item",
-			},
+		products: {
+			type: Array,
+			required: true,
 		},
-		totalAmount: {
+		amount: {
 			type: Number,
 			required: [true, "Total amount is required"],
 			validate: {
@@ -64,39 +24,72 @@ const orderSchema = new mongoose.Schema(
 				message: "Total amount must be greater than 0",
 			},
 		},
-		shippingAddress: {
-			street: {
-				type: String,
-				required: [true, "Street address is required"],
-				trim: true,
-				maxlength: [100, "Street address cannot exceed 100 characters"],
-			},
-			city: {
-				type: String,
-				required: [true, "City is required"],
-				trim: true,
-				validate: validators.getNameValidation("City"),
-			},
-			state: {
-				type: String,
-				required: [true, "State is required"],
-				trim: true,
-				validate: validators.getNameValidation("State"),
-			},
-			zipCode: {
-				type: String,
-				required: [true, "ZIP code is required"],
-				validate: {
-					validator: validators.isZipCode,
-					message: "Invalid ZIP code format",
+		address: {
+			type: {
+				firstName: {
+					type: String,
+					required: [true, "First name is required"],
+					trim: true,
+					minlength: [2, "First name must be at least 2 characters"],
+					maxlength: [50, "First name cannot exceed 50 characters"],
+				},
+				lastName: {
+					type: String,
+					required: [true, "Last name is required"],
+					trim: true,
+					minlength: [2, "Last name must be at least 2 characters"],
+					maxlength: [50, "Last name cannot exceed 50 characters"],
+				},
+				email: {
+					type: String,
+					required: [true, "Email is required"],
+					validate: {
+						validator: validators.isEmail,
+						message: "Please provide a valid email",
+					},
+				},
+				street: {
+					type: String,
+					required: [true, "Street address is required"],
+					trim: true,
+					minlength: [5, "Street address must be at least 5 characters"],
+					maxlength: [100, "Street address cannot exceed 100 characters"],
+				},
+				city: {
+					type: String,
+					required: [true, "City is required"],
+					trim: true,
+					minlength: [2, "City must be at least 2 characters"],
+					maxlength: [50, "City cannot exceed 50 characters"],
+				},
+				state: {
+					type: String,
+					required: [true, "State is required"],
+					trim: true,
+				},
+				zipcode: {
+					type: String,
+					required: [true, "Zip code is required"],
+					validate: {
+						validator: validators.isZipCode,
+						message: "Please provide a valid zip code",
+					},
+				},
+				country: {
+					type: String,
+					required: [true, "Country is required"],
+					trim: true,
+				},
+				phone: {
+					type: String,
+					required: [true, "Phone number is required"],
+					validate: {
+						validator: validators.isPhone,
+						message: "Please provide a valid phone number",
+					},
 				},
 			},
-			country: {
-				type: String,
-				required: [true, "Country is required"],
-				trim: true,
-				validate: validators.getNameValidation("Country"),
-			},
+			required: [true, "Address is required"],
 		},
 		status: {
 			type: String,
@@ -108,41 +101,30 @@ const orderSchema = new mongoose.Schema(
 		},
 		paymentMethod: {
 			type: String,
-			required: true,
+			enum: ["Stripe", "Cash on Delivery"],
+			default: "Cash on Delivery",
 		},
 		payment: {
 			type: Boolean,
 			required: true,
 			default: false,
 		},
-		isDelivered: {
-			type: Boolean,
-			default: false,
-		},
 		deliveredAt: {
 			type: Date,
-			validate: {
-				validator: function (value) {
-					return !value || value <= new Date();
-				},
-				message: "Delivery date cannot be in the future",
-			},
 		},
 	},
 	{
 		timestamps: true,
-		toJSON: { virtuals: true },
-		toObject: { virtuals: true },
 	}
 );
 
 orderSchema.pre("save", function (next) {
-	if (this.isDelivered && !this.deliveredAt) {
+	if (this.status === "Delivered" && !this.deliveredAt) {
 		this.deliveredAt = new Date();
 	}
 	next();
 });
 
-const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
-module.exports = Order;
+export default Order;

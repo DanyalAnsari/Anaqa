@@ -1,11 +1,11 @@
-import logger from "#services/logger";
-import app from "#app/app";
-import DB from "#root/database/mongo";
-const initializeServer =async (app) => {
-	const PORT = process.env.PORT;
-	const NODE_ENV = process.env.NODE_ENV;
+import logger from "#utils/logger";
+import app from "./app/app.js";
+import DB from "./database/mongo.js";
+import { NODE_ENV, PORT } from "#config/appConfig";
+
+const initializeServer = async (app) => {
 	try {
-		await DB.connect()
+		await DB.connect();
 		// Start server
 		const server = app.listen(PORT, () => {
 			logger.info(`Server running in ${NODE_ENV} mode on port ${PORT}`);
@@ -41,6 +41,7 @@ const initializeServer =async (app) => {
 			gracefulShutdown(server);
 		});
 	} catch (error) {
+		logger.error(err);
 		logger.error("Failed to start server:", error);
 		process.exit(1);
 	}

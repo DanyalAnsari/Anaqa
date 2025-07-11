@@ -10,7 +10,7 @@ if (!fs.existsSync("logs")) {
 const { format } = winston;
 const print = format.printf(({ timestamp, level, message }) => {
   const msg =
-    typeof message === "object" ? JSON.stringify(message, null, 2) : message;
+    typeof message === "object" ? JSON.stringify(message, null, 4) : message;
   return `${timestamp} ${level}: ${msg}`;
 });
 

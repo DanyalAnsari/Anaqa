@@ -1,4 +1,4 @@
-import { ValidationException } from "#utils/Exceptions";
+import { ValidationException } from "#utils/errors/Exceptions";
 
 const validate = (schema, property = "body") => {
 	return (req, res, next) => {

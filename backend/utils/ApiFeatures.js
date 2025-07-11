@@ -1,125 +1,169 @@
 class ApiFeatures {
-  constructor(query, queryStr) {
-    this.query = query;
-    this.queryStr = queryStr;
-    this.excludedFields = ['page', 'sort', 'limit', 'fields'];
-    this.page = Number(queryStr.page) || 1;
-    this.limit = Number(queryStr.limit) || 10;
-    this.queryFilter = {};
-  }
+	constructor(query, queryStr) {
+		this.query = query;
+		this.queryStr = queryStr;
+		this.excludedFields = ["page", "sort", "limit", "fields"];
+		this.page = Number(queryStr.page) || 1;
+		this.limit = Number(queryStr.limit) || 10;
+		this.queryFilter = {};
+	}
 
-  filter() {
-    // Create a deep copy of the query string
-    const queryObj = { ...this.queryStr };
-    
-    // Remove excluded fields
-    this.excludedFields.forEach((field) => delete queryObj[field]);
-    
-    // Store original values before processing
-    const minPrice = queryObj.minPrice ? Number(queryObj.minPrice) : null;
-    const maxPrice = queryObj.maxPrice ? Number(queryObj.maxPrice) : null;
-    const ratingFilter = queryObj.rating ? Number(queryObj.rating) : null;
-    const categoriesFilter = queryObj.categories || null;
-    
-    // Remove special fields we'll handle separately
-    delete queryObj.minPrice;
-    delete queryObj.maxPrice;
-    delete queryObj.rating;
-    delete queryObj.categories;
-    
-    // ====== 1. Build base query without special filters =======
-    this.queryFilter = { ...queryObj };
-    
-    // ====== 2. Apply each special filter directly to the mongo query =======
-    
-    // Apply price range filter directly to query when needed
-    if (minPrice !== null && !isNaN(minPrice)) {
-      this.query = this.query.where('price').gte(minPrice);
-    }
-    console.log("Final MongoDB query:",minPrice);
-    
-    if (maxPrice !== null && !isNaN(maxPrice)) {
-      this.query = this.query.where('price').lt(maxPrice);
-    }
-    
-    // Apply rating filter directly
-    if (ratingFilter !== null && !isNaN(ratingFilter) && ratingFilter !== 0) {
-      this.query = this.query.where('ratings.average').gt(ratingFilter);
-    }
-    
-    // Apply categories filter directly
-    if (categoriesFilter) {
-      let categoriesArray = [];
-      
-      if (Array.isArray(categoriesFilter)) {
-        categoriesArray = categoriesFilter;
-      } else if (typeof categoriesFilter === "string") {
-        categoriesArray = categoriesFilter
-          .split(",")
-          .map((category) => category.trim())
-          .filter((category) => category.length > 0);
-      }
-      
-      if (categoriesArray.length > 0) {
-        this.query = this.query.where('category').in(categoriesArray);
-        this.queryFilter.category = { $in: categoriesArray };
-      }
-    }
-    
-    // ====== 3. Apply remaining regular filters =======
-    // Use the base query for the rest of the fields
-    this.query = this.query.find(this.queryFilter);
-    
-    // Update queryFilter with special filters for count query
-    if (minPrice !== null && !isNaN(minPrice)) {
-      if (!this.queryFilter.price) this.queryFilter.price = {};
-      this.queryFilter.price.$gte = minPrice;
-    }
-    
-    if (maxPrice !== null && !isNaN(maxPrice)) {
-      if (!this.queryFilter.price) this.queryFilter.price = {};
-      this.queryFilter.price.$lte = maxPrice;
-    }
-    
-    if (ratingFilter !== null && !isNaN(ratingFilter) && ratingFilter !== 0) {
-      this.queryFilter["ratings.average"] = { $gte: ratingFilter };
-    }
-    
-    
-    return this;
-  }
+	filter() {
+		// Create a deep copy of the query string
+		const queryObj = { ...this.queryStr };
 
-  sort() {
-    if (this.queryStr.sort) {
-      const sortBy = this.queryStr.sort.split(',').join(' ');
-      this.query = this.query.sort(sortBy);
-    } else {
-      // Default sort by newest
-      this.query = this.query.sort('-createdAt');
-    }
-    return this;
-  }
+		// Remove excluded fields
+		this.excludedFields.forEach((field) => delete queryObj[field]);
 
-  limitFields() {
-    if (this.queryStr.fields) {
-      const fields = this.queryStr.fields.split(',').join(' ');
-      this.query = this.query.select(fields);
-    } else {
-      // Exclude Mongoose's __v field by default
-      this.query = this.query.select('-__v');
-    }
-    return this;
-  }
+		// Extract special filters
+		const minPrice = queryObj.minPrice ? Number(queryObj.minPrice) : null;
+		const maxPrice = queryObj.maxPrice ? Number(queryObj.maxPrice) : null;
+		const category = queryObj.category || null;
+		const subCategory = queryObj.subCategory || null;
+		const featured = queryObj.featured || null;
+		const bestseller = queryObj.bestseller || null;
+		const sizes = queryObj.sizes || null;
+		const search = queryObj.search || null;
 
-  paginate() {
-    const page = this.page;
-    const limit = this.limit;
-    const skip = (page - 1) * limit;
-    
-    this.query = this.query.skip(skip).limit(limit);
-    return this;
-  }
+		// Remove special fields from queryObj
+		delete queryObj.minPrice;
+		delete queryObj.maxPrice;
+		delete queryObj.category;
+		delete queryObj.subCategory;
+		delete queryObj.featured;
+		delete queryObj.bestseller;
+		delete queryObj.sizes;
+		delete queryObj.search;
+
+		// ====== Build MongoDB query filters ======
+
+		// Price range filter
+		if (minPrice !== null && !isNaN(minPrice)) {
+			this.query = this.query.where("price").gte(minPrice);
+		}
+
+		if (maxPrice !== null && !isNaN(maxPrice)) {
+			this.query = this.query.where("price").lte(maxPrice);
+		}
+
+		// Category filter (exact match or array of categories)
+		if (category) {
+			let categoryArray = [];
+
+			if (Array.isArray(category)) {
+				categoryArray = category;
+			} else if (typeof category === "string") {
+				categoryArray = category
+					.split(",")
+					.map((cat) => cat.trim())
+					.filter((cat) => cat.length > 0);
+			}
+
+			if (categoryArray.length > 0) {
+				this.query = this.query.where("category").in(categoryArray);
+			}
+		}
+
+		// SubCategory filter
+		if (subCategory) {
+			let subCategoryArray = [];
+
+			if (Array.isArray(subCategory)) {
+				subCategoryArray = subCategory;
+			} else if (typeof subCategory === "string") {
+				subCategoryArray = subCategory
+					.split(",")
+					.map((subCat) => subCat.trim())
+					.filter((subCat) => subCat.length > 0);
+			}
+
+			if (subCategoryArray.length > 0) {
+				this.query = this.query.where("subCategory").in(subCategoryArray);
+			}
+		}
+
+		// Featured filter
+		if (featured !== null) {
+			const isFeatured = featured === "true" || featured === true;
+			this.query = this.query.where("featured").equals(isFeatured);
+		}
+
+		// Bestseller filter
+		if (bestseller !== null) {
+			const isBestseller = bestseller === "true" || bestseller === true;
+			this.query = this.query.where("bestseller").equals(isBestseller);
+		}
+
+		// Sizes filter (products that have any of the specified sizes)
+		if (sizes) {
+			let sizesArray = [];
+
+			if (Array.isArray(sizes)) {
+				sizesArray = sizes;
+			} else if (typeof sizes === "string") {
+				sizesArray = sizes
+					.split(",")
+					.map((size) => size.trim())
+					.filter((size) => size.length > 0);
+			}
+
+			if (sizesArray.length > 0) {
+				this.query = this.query.where("sizes").in(sizesArray);
+			}
+		}
+
+		// Search filter (searches in name and description)
+		if (search && search.trim().length > 0) {
+			const searchRegex = new RegExp(search.trim(), "i");
+			this.query = this.query.where({
+				$or: [{ name: searchRegex }, { description: searchRegex }],
+			});
+		}
+
+		// Apply remaining regular filters
+		this.query = this.query.find(queryObj);
+
+		return this;
+	}
+
+	sort() {
+		if (this.queryStr.sort) {
+			// Handle sorting: price, -price, name, -name, createdAt, -createdAt, etc.
+			const sortBy = this.queryStr.sort.split(",").join(" ");
+			this.query = this.query.sort(sortBy);
+		} else {
+			// Default sort by newest first
+			this.query = this.query.sort("-createdAt");
+		}
+		return this;
+	}
+
+	limitFields() {
+		if (this.queryStr.fields) {
+			const fields = this.queryStr.fields.split(",").join(" ");
+			this.query = this.query.select(fields);
+		} else {
+			// Exclude Mongoose's __v field by default
+			this.query = this.query.select("-__v");
+		}
+		return this;
+	}
+
+	paginate() {
+		const page = this.page;
+		const limit = this.limit;
+		const skip = (page - 1) * limit;
+
+		this.query = this.query.skip(skip).limit(limit);
+		return this;
+	}
+
+	// Helper method to get total count for pagination
+	async getCount() {
+		// Create a new query with the same filters but without pagination, sorting, and field selection
+		const countQuery = this.query.model.find(this.query.getQuery());
+		return await countQuery.countDocuments();
+	}
 }
-
 
 export default ApiFeatures;

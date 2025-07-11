@@ -1,14 +1,16 @@
 function sanitize(obj) {
   if (typeof obj !== 'object' || obj === null) return obj;
 
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      // If key is unsafe, delete it
-      if (key.includes('$') || key.includes('.')) {
-        delete obj[key];
-      } else if (typeof obj[key] === 'object') {
-        sanitize(obj[key]); // Recursive sanitization
-      }
+  if (Array.isArray(obj)) {
+    return obj.map(item => sanitize(item));
+  }
+
+  const keys = Object.keys(obj);
+  for (const key of keys) {
+    if (key.includes('$') || key.includes('.')) {
+      delete obj[key];
+    } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+      sanitize(obj[key]);
     }
   }
 
