@@ -16,7 +16,7 @@ const DB = {
   connect: async () => {
     try {
       const uri = process.env.MONGO_DB_URI || 'mongodb://localhost:27017/';
-      const dbName = process.env.MONGO_DB_NAME || 'ecom';
+      const dbName = process.env.MONGO_DB_NAME || 'Anaqa';
       
       const conn = await mongoose.connect(
         `${uri}${dbName}`,
