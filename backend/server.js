@@ -4,6 +4,11 @@ import { NODE_ENV, PORT } from "#config/appConfig";
 
 const initializeServer = async (app) => {
 	try {
+		console.log("========= ENV DUMP =========");
+		console.log("PORT:", process.env.PORT);
+		console.log("NODE_ENV:", process.env.NODE_ENV);
+		console.log("Stripe:", process.env.STRIPE_SECRET_KEY); // Add all your critical vars
+		console.log("============================");
 		await DB.connect();
 		// Start server
 		const server = app.listen(PORT, () => {
