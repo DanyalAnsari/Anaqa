@@ -8,14 +8,7 @@ const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config({
-  path: path.resolve(__dirname, "../.env"),
-  debug: true 
-});
-
-console.log("Environment Variables Loaded:", {
-  PORT: process.env.PORT,
-  NODE_ENV: process.env.NODE_ENV,
-  MONGO_DB_URI: !!process.env.MONGO_DB_URI // Shows if defined without exposing value
+	path: path.resolve(__dirname, "../.env"),
 });
 
 export const PORT = process.env.PORT || 5000;

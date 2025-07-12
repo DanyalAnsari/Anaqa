@@ -1,6 +1,4 @@
 import { NODE_ENV, PORT } from "#config/appConfig";
-console.log("Current working directory:", process.cwd());
-console.log("Environment:", process.env.NODE_ENV, process.env.PORT);
 import logger from "#utils/logger";
 import app from "./app/app.js";
 import DB from "./database/mongo.js";
