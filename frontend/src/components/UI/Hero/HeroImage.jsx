@@ -9,7 +9,7 @@ const HeroImage = () => {
 				<HoverImage
 					src={"/hero_img.png"}
 					alt="Latest Fashion Collection"
-					className="w-full h-[420px] lg:h-[520px] object-cover"
+					className="h-[420px] lg:h-[520px]"
 				/>
 				{/* Floating Badge */}
 				<FloatingBadge className="top-6 left-6 bg-primary text-primary-content font-semibold ">

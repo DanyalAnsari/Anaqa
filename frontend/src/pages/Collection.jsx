@@ -2,18 +2,21 @@ import React from "react";
 import Container, {
 	GridContainer,
 } from "@/components/layouts/containers/Container";
-import ProductCard from "@/components/UI/ProductCard";
 import { useProducts } from "@/app/hooks/useProducts";
 import { SectionHeader } from "@/components/common/Headers";
 import Sidebar from "@/features/products/components/Sidebar/Sidebar";
 import useUiState from "@/app/hooks/useUiState";
 import ControlBar from "@/features/products/components/Sidebar/ControlBar";
 import NotFoundCard from "@/features/products/components/Sidebar/NotFoundCard";
+import { LoadingComponent } from "@/components/common/typography/LoadingComp";
+import ProductCard from "@/features/products/components/Card/ProductCard";
 
 // Collection Page Component - Updated for consistency
 const Collection = () => {
 	const { viewMode } = useUiState();
-	const { products } = useProducts();
+	const { products, isLoading } = useProducts();
+
+	if (isLoading) return <LoadingComponent />;
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-base-200/30 to-base-100">

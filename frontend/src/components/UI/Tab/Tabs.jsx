@@ -1,7 +1,7 @@
 import React from "react";
 import { useProductWidget } from "@/app/hooks/useProducts";
 import { SectionHeader } from "@/components/common/Headers";
-import ProductsGridContainer from "../ProductsGridContainer";
+import ProductsGridContainer from "@/features/products/components/Card/ProductsGridContainer";
 
 export const LatestProductsSection = () => {
 	const { isError, isLoading, error, products } = useProductWidget({

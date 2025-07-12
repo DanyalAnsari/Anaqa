@@ -1,10 +1,15 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useGetProductsQuery } from "@/features/products/productsApi";
 import {
 	buildProductQueryParams,
 	formatProductData,
 } from "@/utilities/productUtils";
 import useProductState from "./useProductState";
+
+const formatProductResponse = (data) => {
+	if (!data?.data) return [];
+	return data.data.map(formatProductData);
+};
 
 export const useProducts = () => {
 	const { sort, category, subCategory, price, searchTerm } = useProductState();
@@ -17,8 +22,6 @@ export const useProducts = () => {
 			maxPrice: price[1],
 			sort,
 			search: searchTerm,
-			page: 1,
-			limit: 12,
 		}),
 		[category, subCategory, price, sort, searchTerm]
 	);
@@ -34,36 +37,28 @@ export const useProducts = () => {
 		useGetProductsQuery(queryParams);
 
 	// Format products data
-	const formattedProducts = useMemo(() => {
-		if (!data?.data) return [];
-		return data.data.map((product) => formatProductData(product));
-	}, [data]);
+	const products = useMemo(() => formatProductResponse(data), [data]);
 
 	// Extract pagination info
 	const pagination = data?.pagination || { total: 0, page: 1, pages: 1 };
 
 	return {
-		// Data
-		products: formattedProducts,
+		products,
 		pagination,
 		filters,
 		isLoading: isLoading || isFetching,
 		isSuccess,
 		isError,
 		error,
-
-		// Methods
 		refetch,
 	};
 };
 
 export const useProductWidget = (initialFilters = {}) => {
-	const [filters] = useState(initialFilters);
-
 	// Build query params from filters
 	const queryParams = useMemo(
-		() => buildProductQueryParams(filters),
-		[filters]
+		() => buildProductQueryParams(initialFilters),
+		[initialFilters]
 	);
 
 	// Fetch products with RTK Query
@@ -71,15 +66,11 @@ export const useProductWidget = (initialFilters = {}) => {
 		useGetProductsQuery(queryParams);
 
 	// Format products data
-	const formattedProducts = useMemo(() => {
-		if (!data?.data) return [];
-		return data.data.map((product) => formatProductData(product));
-	}, [data]);
+	const products = useMemo(() => formatProductResponse(data), [data]);
 
 	return {
 		// Data
-		products: formattedProducts,
-		filters,
+		products,
 		isLoading: isLoading || isFetching,
 		isSuccess,
 		isError,

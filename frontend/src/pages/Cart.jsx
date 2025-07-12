@@ -1,110 +1,75 @@
-// import { useContext, useEffect, useState } from "react";
-// import { ShopContext } from "../../context/ShopContext";
-// import Title from "@/components/common/Title";
-// import { assets } from "@/assets/assets.js";
-// import CartTotal from "@/components/CartTotal";
+import React from "react";
+import GradientBackground from "@/components/layouts/containers/Gradients";
+import Container from "@/components/layouts/containers/Container";
+import EmptyCartPage, {
+	LoadingComponent,
+} from "@/features/cart/components/EmptyCartPage";
+import { SectionHeader } from "@/components/common/Headers";
+import CartItemsTable from "@/features/cart/components/CartItemsTable";
+import Button from "@/components/common/Buttons";
+import { useNavigate } from "react-router";
+import OrderSummary from "@/features/cart/components/OrderSummary";
+import { useCart } from "@/app/hooks/useCart";
+import { Trash } from "lucide-react";
 
 const Cart = () => {
-//   const { products, currency, cartItem, updateQuantity, navigate } = useContext(ShopContext);
-//   const [cartData, setCartData] = useState([]);
+	const navigate = useNavigate();
+	const { items, isLoading, totalQuantity, totalValue, clearCart } = useCart();
+	const cartSummary = {
+		totalQuantity,
+		totalValue,
+		discount: 500,
+		shipping: 0,
+		tax: 10,
+		total: totalValue + 10 - 500 + 0,
+	};
 
-//   useEffect(() => {
-//     if (products.length > 0) {
-//       const tempData = [];
-      
-//       Object.entries(cartItem).forEach(([productId, sizes]) => {
-//         Object.entries(sizes).forEach(([size, quantity]) => {
-//           if (quantity > 0) {
-//             tempData.push({
-//               _id: productId,
-//               size,
-//               quantity,
-//             });
-//           }
-//         });
-//       });
-      
-//       setCartData(tempData);
-//     }
-//   }, [cartItem, products]);
+	if (isLoading) {
+		return <LoadingComponent />;
+	}
 
-//   const handleQuantityChange = (productId, size, value) => {
-//     const quantity = Number(value);
-//     if (quantity > 0) {
-//       updateQuantity(productId, size, quantity);
-//     }
-//   };
+	if (items.length === 0) {
+		console.log(items.length === 0);
+		return <EmptyCartPage />;
+	}
 
-//   const removeItem = (productId, size) => {
-//     updateQuantity(productId, size, 0);
-//   };
+	return (
+		<GradientBackground type="section" className="min-h-screen py-20">
+			<Container>
+				{/* Header */}
+				<SectionHeader
+					label="SHOPPING CART"
+					heading="Your Cart"
+					description={`${cartSummary.totalItems} ${
+						cartSummary.totalItems === 1 ? "item" : "items"
+					} in your cart`}
+				/>
 
-  return 
-    // <div className="border-t pt-14">
-    //   <div className="text-2xl mb-3">
-    //     <Title text1="YOUR" text2="CART" />
-    //   </div>
-      
-    //   <div>
-    //     {cartData.map((item, index) => {
-    //       const productData = products.find(product => product._id === item._id);
-          
-    //       if (!productData) return null;
-          
-    //       return (
-    //         <div
-    //           key={index}
-    //           className="py-4 border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
-    //         >
-    //           <div className="flex items-start gap-6">
-    //             <img
-    //               src={productData.image[0]}
-    //               className="w-16 sm:w-20"
-    //               alt={productData.name}
-    //             />
-    //             <div>
-    //               <p className="text-xs sm:text-lg font-medium">{productData.name}</p>
-    //               <div className="flex items-center gap-5 mt-2">
-    //                 <p>{currency}{productData.price}</p>
-    //                 <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">{item.size}</p>
-    //               </div>
-    //             </div>
-    //           </div>
-              
-    //           <input
-    //             type="number"
-    //             min="1"
-    //             value={item.quantity}
-    //             onChange={(e) => handleQuantityChange(item._id, item.size, e.target.value)}
-    //             className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
-    //           />
-              
-    //           <img
-    //             onClick={() => removeItem(item._id, item.size)}
-    //             src={assets.bin_icon}
-    //             className="w-4 mr-4 sm:w-5 cursor-pointer"
-    //             alt="Remove item"
-    //           />
-    //         </div>
-    //       );
-    //     })}
-    //   </div>
-      
-    //   <div className="flex justify-end my-20">
-    //     <div className="w-full sm:w-[450px]">
-    //       <CartTotal />
-    //       <div className="w-full text-end">
-    //         <button
-    //           onClick={() => navigate('/place-order')}
-    //           className="bg-black text-white text-sm my-8 px-8 py-3"
-    //         >
-    //           PROCEED TO CHECKOUT
-    //         </button>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-  
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+					{/* Cart Items */}
+					<div className="lg:col-span-2">
+						<CartItemsTable />
+
+						{/* Continue Shopping */}
+						<div className="mt-6">
+							<Button action={() => clearCart()}>
+								<Trash className="w-5 h-5" />
+								Clear Cart
+							</Button>
+						</div>
+						<div className="mt-6">
+							<Button variant="outline" action={() => navigate("/products")}>
+								Continue Shopping
+							</Button>
+						</div>
+					</div>
+
+					{/* Order Summary */}
+					<OrderSummary cartSummary={cartSummary} />
+				</div>
+			</Container>
+		</GradientBackground>
+	);
 };
 
 export default Cart;

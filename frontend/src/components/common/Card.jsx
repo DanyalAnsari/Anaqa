@@ -1,4 +1,5 @@
 import React from "react";
+import { HoverImage } from "./ImageUtil";
 
 const Card = ({
 	className = "",
@@ -8,16 +9,16 @@ const Card = ({
 	fullHeight = false,
 }) => {
 	const variantClasses = {
-		default: "bg-base-100 border border-base-300/50 rounded-xl",
+		default: "bg-base-100 border border-base-300/50 rounded-2xl shadow-lg",
 		elevated:
 			"bg-base-100 shadow-lg border border-base-300/50 rounded-xl hover:shadow-xl",
-		minimal: "bg-base-100 border border-base-300/30 rounded-lg",
+		minimal: "bg-base-200/50 border border-base-300/30 rounded-2xl shadow-lg",
 		product:
 			"bg-base-100 rounded-2xl shadow-lg border border-base-300/50 hover:border-primary/20 hover:shadow-xl",
 		feature:
 			"bg-gradient-to-br from-secondary/5 to-secondary/10 border border-secondary/20 rounded-2xl",
 		glass:
-			"bg-base-100/80 backdrop-blur-sm border border-base-300/30 rounded-xl",
+			"bg-base-100/90 backdrop-blur-xs border border-base-300/30 rounded-2xl",
 	};
 
 	const interactiveClasses = interactive
@@ -28,7 +29,7 @@ const Card = ({
 
 	return (
 		<div
-			className={`overflow-hidden ${variantClasses[variant]} ${interactiveClasses} ${heightClasses} ${className}`}
+			className={`card overflow-hidden ${variantClasses[variant]} ${interactiveClasses} ${heightClasses} ${className}`}
 		>
 			{children}
 		</div>
@@ -50,8 +51,8 @@ export const CardContent = ({
 	};
 
 	const alignmentClasses = centered
-		? "flex flex-col items-center text-center"
-		: "";
+		? "card-body flex-col items-center text-center"
+		: "card-body";
 
 	return (
 		<div
@@ -103,16 +104,10 @@ export const CardImage = ({
 	src,
 	alt,
 	className = "",
-	aspectRatio = "16/9",
-	objectFit = "cover",
+	imageClass = "",
 	overlay = false,
+	children,
 }) => {
-	const aspectClasses = {
-		"1/1": "aspect-square",
-		"4/3": "aspect-4/3",
-		"16/9": "aspect-video",
-		"3/4": "aspect-3/4",
-	};
 
 	const overlayElement = overlay && (
 		<div className="absolute inset-0 bg-gradient-to-t from-base-content/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -120,15 +115,16 @@ export const CardImage = ({
 
 	return (
 		<div
-			className={`relative overflow-hidden ${aspectClasses[aspectRatio]} ${className}`}
+			className={`relative overflow-hidden ${className}`}
 		>
-			<img
+			<HoverImage
 				src={src}
 				alt={alt}
-				className={`w-full h-full object-${objectFit} transition-transform duration-500 group-hover:scale-110`}
+				className={`${imageClass}`}
 				loading="lazy"
 			/>
 			{overlayElement}
+			{children}
 		</div>
 	);
 };

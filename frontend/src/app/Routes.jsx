@@ -9,6 +9,8 @@ import PlaceOrders from "@/pages/PlaceOrders";
 import Product from "@/pages/Product";
 
 import AppLayouts from "@/components/layouts/AppLayout";
+import NotFoundPage from "@/pages/NotFoundPage";
+import Verify from "@/pages/Verify";
 
 const Routes = [
 	{
@@ -23,7 +25,9 @@ const Routes = [
 			{ path: "/cart", element: <Cart /> },
 			{ path: "/auth", element: <Auth /> },
 			{ path: "/orders", element: <Orders /> },
-			{ path: "place-order", element: <PlaceOrders /> },
+			{ path: "/checkout", element: <PlaceOrders /> },
+			{ path: "/verify", element: <Verify /> },
+			{ path: "*", element: <NotFoundPage /> },
 		],
 	},
 ];

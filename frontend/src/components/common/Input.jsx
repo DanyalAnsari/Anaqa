@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import React from "react";
+import { Link, NavLink } from "react-router";
 
 // Input Components
 export const Input = ({ className = "", label, ...props }) => {
@@ -34,7 +35,8 @@ export const Select = ({ className = "", label, options = [], ...props }) => {
 				<span className="text-sm font-medium text-primary">{label}</span>
 			)}
 			<select
-				className={`select rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${className}`}
+				className={`select rounded-xl 
+					select-sm bg-base-100 text-neutral focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${className}`}
 				{...props}
 			>
 				{options.map((option, index) => (
@@ -42,6 +44,7 @@ export const Select = ({ className = "", label, options = [], ...props }) => {
 						{option.label}
 					</option>
 				))}
+				
 			</select>
 		</label>
 	);
@@ -52,7 +55,7 @@ export const TabContainer = ({ className = "", children, ...props }) => {
 	return (
 		<div
 			role="tablist"
-			className={`tabs tabs-boxed bg-base-200/50 p-2 rounded-2xl border border-base-300/30 ${className}`}
+			className={`tabs tabs-box gap-1 bg-base-200/50 p-2 rounded-2xl border border-base-300/30 ${className}`}
 			{...props}
 		>
 			{children}
@@ -82,21 +85,14 @@ export const TabContent = ({ className = "", children, ...props }) => {
 };
 
 // Navigation Components
-export const NavLink = ({
-	className = "",
-	active = false,
-	children,
-	...props
-}) => {
+export const NavLinkComp = ({ className = "", children, ...props }) => {
 	return (
-		<a
-			className={`text-neutral hover:text-primary transition-colors duration-300 ${
-				active ? "text-primary font-medium" : ""
-			} ${className}`}
+		<NavLink
+			className={`text-neutral hover:text-primary transition-colors duration-300 ${className}`}
 			{...props}
 		>
 			{children}
-		</a>
+		</NavLink>
 	);
 };
 
@@ -107,11 +103,11 @@ export const Breadcrumb = ({ className = "", items = [], ...props }) => {
 				{items.map((item, index) => (
 					<li key={index}>
 						{item.href ? (
-							<a href={item.href} className="text-neutral hover:text-primary">
-								{item.label}
-							</a>
+							<Link to={item.href} className="text-neutral hover:text-primary">
+								<span className="capitalize">{item.label}</span>
+							</Link>
 						) : (
-							<span className="text-primary">{item.label}</span>
+							<span className="text-primary capitalize">{item.label}</span>
 						)}
 					</li>
 				))}
@@ -146,6 +142,42 @@ export const StarRating = ({
 						aria-current={`${rating === index + 1}`}
 						{...props}
 					></div>
+				);
+			})}
+		</div>
+	);
+};
+
+export const StarRatingInput = ({
+	className = "",
+	rating = 0,
+	maxRating = 5,
+	size = "sm",
+	onChange,
+	...props
+}) => {
+	const sizes = {
+		xs: "rating-xs",
+		sm: "rating-sm",
+		md: "rating-md",
+		lg: "rating-lg",
+	};
+
+	return (
+		<div className={`rating ${sizes[size]} ${className}`}>
+			{[...Array(maxRating)].map((_, index) => {
+				const starValue = index + 1;
+				return (
+					<input
+						type="radio"
+						key={index}
+						value={starValue}
+						aria-label={`${starValue}-star`}
+						className="mask mask-star bg-warning"
+						checked={rating === starValue}
+						onChange={onChange}
+						{...props}
+					/>
 				);
 			})}
 		</div>

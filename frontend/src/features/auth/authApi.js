@@ -15,9 +15,11 @@ export const authApi = baseApi.injectEndpoints({
 			onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
 				try {
 					const { data } = await queryFulfilled;
+					const { token, user } = data.data;
+
 					// Store token and user info in localStorage
-					if (data.token) {
-						dispatch(loginAction({ token: data.token, user: data.user }));
+					if (token) {
+						dispatch(loginAction({ token, user }));
 					}
 				} catch (error) {
 					console.error("Login failed:", error);
@@ -34,12 +36,14 @@ export const authApi = baseApi.injectEndpoints({
 				body: userData,
 			}),
 			// Handle successful registration
-			onQueryStarted: async (_, { queryFulfilled }) => {
+			onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
 				try {
 					const { data } = await queryFulfilled;
+					const { token, user } = data.data;
+
 					// Store token and user info in localStorage
-					if (data.token) {
-						localStorage.setItem("token", data.token);
+					if (token) {
+						dispatch(loginAction({ token, user }));
 					}
 				} catch (error) {
 					console.error("Registration failed:", error);
@@ -60,9 +64,5 @@ export const authHelpers = {
 		localStorage.removeItem("user");
 		// Force refresh cached queries
 		baseApi.util.resetApiState();
-	},
-
-	isAuthenticated: () => {
-		return !!localStorage.getItem("token");
 	},
 };

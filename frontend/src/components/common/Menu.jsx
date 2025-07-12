@@ -1,19 +1,19 @@
 import constants from "@/utilities/appConstants";
 import React from "react";
-import { NavLink } from "react-router";
+import { NavLinkComp } from "./Input";
 
 const Menu = () => {
 	return (
 		<ul className="menu menu-horizontal px-1">
 			{constants.menu.map(({ path, label }) => (
 				<li key={path}>
-					<NavLink
+					<NavLinkComp
 						to={path}
 						className="flex flex-col items-center gap-1 font-medium"
 					>
 						{label}
 						<hr className="w-1/2 border-none h-[1.5px] bg-gray-700 hidden" />
-					</NavLink>
+					</NavLinkComp>
 				</li>
 			))}
 		</ul>
@@ -45,9 +45,9 @@ export const MobileMenu = () => {
 			>
 				{constants.menu.map(({ path, label }) => (
 					<li key={path}>
-						<NavLink to={path}>
+						<NavLinkComp to={path}>
 							<p>{label}</p>
-						</NavLink>
+						</NavLinkComp>
 					</li>
 				))}
 			</ul>

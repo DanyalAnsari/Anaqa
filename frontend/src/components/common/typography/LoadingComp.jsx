@@ -5,6 +5,7 @@ import {
 import React from "react";
 import { H6 } from "./Headings";
 import { TextBody } from "./Text";
+import GradientBackground from "@/components/layouts/containers/Gradients";
 
 // Loading Components
 export const LoadingSpinner = ({ className = "", size = "lg", ...props }) => {
@@ -69,5 +70,16 @@ export const MessageBox = ({
 				<TextBody className="text-neutral text-sm">{description}</TextBody>
 			</HoverIconContainer>
 		</div>
+	);
+};
+
+export const LoadingComponent = () => {
+	return (
+		<GradientBackground
+			type="section"
+			className="min-h-screen flex items-center justify-center"
+		>
+			<LoadingSpinner />
+		</GradientBackground>
 	);
 };

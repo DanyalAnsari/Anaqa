@@ -1,4 +1,8 @@
 import baseApi from "@/api/api";
+import {
+	buildProductQueryParams,
+	buildUrlParams,
+} from "@/utilities/productUtils";
 
 // Define product-related API endpoints
 export const productApi = baseApi.injectEndpoints({
@@ -7,22 +11,11 @@ export const productApi = baseApi.injectEndpoints({
 		getProducts: builder.query({
 			query: (params = {}) => {
 				// Construct query string from params
-				const queryParams = new URLSearchParams();
+				const processedParams = buildProductQueryParams(params);
 
-				// Add search param if it exists
-				if (params.search) {
-					queryParams.append("search", params.search);
-				}
-
-				// Add all other params
-				Object.entries(params).forEach(([key, value]) => {
-					if (key !== "search" && value !== undefined) {
-						queryParams.append(key, value);
-					}
-				});
-
-				return `/products/?${queryParams.toString()}`;
+				return `/products/?${buildUrlParams(processedParams)}`;
 			},
+			keepUnusedDataFor: 60,
 			providesTags: (result) => {
 				return result && result.data
 					? [

@@ -1,10 +1,10 @@
 import React from "react";
 import Container, {
+	GridContainer,
 	HoverIconContainer,
 	IconBaseContainer,
 	SectionContainer,
 } from "../layouts/containers/Container";
-import { CategoryGrid } from "../layouts/containers/Grid";
 import { H5 } from "../common/typography/Headings";
 import { TextBody } from "../common/typography/Text";
 import GradientBackground from "../layouts/containers/Gradients";
@@ -20,7 +20,7 @@ const QuickCategories = () => {
 						heading={"Shop by Style"}
 						description={"Find exactly what matches your aesthetic"}
 					/>
-					<CategoryGrid>
+					<GridContainer columns="categories">
 						{categories.map((category) => (
 							<HoverIconContainer
 								key={category.name}
@@ -33,7 +33,7 @@ const QuickCategories = () => {
 								<TextBody variant={"small"}>Explore collection</TextBody>
 							</HoverIconContainer>
 						))}
-					</CategoryGrid>
+					</GridContainer>
 				</SectionContainer>
 			</Container>
 		</GradientBackground>

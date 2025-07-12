@@ -100,7 +100,7 @@ export const GridContainer = ({
 		categories: "grid grid-cols-2 md:grid-cols-4 gap-6",
 		grid: "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6",
 		list: "grid grid-cols-1 max-w-4xl gap-6",
-		two: "grid grid-cols-1 md:grid-cols-2 gap-6",
+		two: "grid grid-cols-1 lg:grid-cols-2 gap-6",
 		three: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
 	};
 

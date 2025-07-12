@@ -1,309 +1,156 @@
-import {  useState } from "react";
-import { 
-  Eye, 
-  EyeOff, 
-  Mail, 
-  User, 
-  Lock, 
-  ShoppingBag,
-  Heart,
-  Star,
-  Filter,
-  Search,
-  Grid,
-  List,
-  ChevronDown,
-  Plus,
-  Minus,
-  Share2,
-  Truck,
-  Shield,
-  RefreshCw,
-  ArrowLeft,
-  ChevronRight
-} from 'lucide-react';
-// import { toast } from "react-toastify";
+import React, { useState, useCallback } from "react";
+import { useForm } from "react-hook-form";
+import { ShoppingBag, User, Mail, ChevronRight } from "lucide-react";
+import { useAuth } from "@/app/hooks/useAuth";
+import GradientBackground from "@/components/layouts/containers/Gradients";
+import { SectionHeader } from "@/components/common/Headers";
+import Card, { CardContent } from "@/components/common/Card";
+import { H4 } from "@/components/common/typography/Headings";
+import PasswordField from "@/features/auth/components/PasswordField";
+import FormField from "@/features/auth/components/FormField";
+import Button from "@/components/common/Buttons";
 
-// const Login = () => {
-//   const [isSignUp, setIsSignUp] = useState(false);
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     email: "",
-//     password: ""
-//   });
-
-//   const handleInputChange = (e) => {
-//     setFormData(prev => ({
-//       ...prev,
-//       [e.target.name]: e.target.value
-//     }));
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-    
-//     const endpoint = isSignUp ? "register" : "login";
-//     const data = isSignUp 
-//       ? formData 
-//       : { email: formData.email, password: formData.password };
-//     const message = isSignUp ? "Your account has been created!" : "Welcome back!";
-
-//     try {
-//       const response = await axios.post(`${backendUrl}/api/user/${endpoint}`, data);
-      
-//       if (response.data.success) {
-//         setToken(response.data.token);
-//         localStorage.setItem("token", response.data.token);
-//         toast.success(message);
-//       }
-//     } catch (error) {
-//       const errorMessage = error.response?.data?.msg || "Something went wrong!";
-//       toast.error(errorMessage);
-//       console.error(error);
-//     }
-//   };
-
-//   // Redirect if user is already logged in
-//   useEffect(() => {
-//     if (token) navigate("/");
-//   }, [token, navigate]);
-
-//   const currentState = isSignUp ? "Sign up" : "Login";
-
-//   return (
-//     <form
-//       onSubmit={handleSubmit}
-//       className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800"
-//     >
-//       <div className="inline-flex items-center gap-2 mb-2 mt-10">
-//         <p className="poppins-medium text-3xl">{currentState}</p>
-//         <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
-//       </div>
-
-//       {isSignUp && (
-//         <input
-//           type="text"
-//           name="name"
-//           value={formData.name}
-//           onChange={handleInputChange}
-//           className="w-full px-3 py-2 border border-gray-800"
-//           placeholder="Name"
-//           required
-//         />
-//       )}
-
-//       <input
-//         type="email"
-//         name="email"
-//         value={formData.email}
-//         onChange={handleInputChange}
-//         className="w-full px-3 py-2 border border-gray-800"
-//         placeholder="Email"
-//         required
-//       />
-
-//       <input
-//         type="password"
-//         name="password"
-//         value={formData.password}
-//         onChange={handleInputChange}
-//         className="w-full px-3 py-2 border border-gray-800"
-//         placeholder="Password"
-//         required
-//       />
-
-//       <div className="w-full flex justify-between text-sm mt-[-8px]">
-//         <p className="cursor-pointer">Forgot your password?</p>
-//         <p
-//           onClick={() => setIsSignUp(!isSignUp)}
-//           className="cursor-pointer"
-//         >
-//           {isSignUp ? "Login Here" : "Create account"}
-//         </p>
-//       </div>
-
-//       <button
-//         type="submit"
-//         className="bg-black text-white font-light px-8 py-2 mt-4"
-//       >
-//         {isSignUp ? "Sign Up" : "Sign In"}
-//       </button>
-//     </form>
-//   );
-// };
-
-// Authentication Component
 const Login = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: ""
-  });
-  const [isLoading, setIsLoading] = useState(false);
+	const [isSignUp, setIsSignUp] = useState(false);
+	const { handleLogin, handleRegister, isLoading } = useAuth();
 
-  const handleInputChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+	} = useForm({
+		defaultValues: {
+			name: "",
+			email: "",
+			password: "",
+		},
+	});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log('Form submitted:', formData);
-    }, 2000);
-  };
+	const onSubmit = useCallback(
+		async (data) => {
+			try {
+				const authHandler = isSignUp ? handleRegister : handleLogin;
+				await authHandler(data);
+			} catch (error) {
+				console.error("Authentication error:", error);
+			}
+		},
+		[isSignUp, handleLogin, handleRegister]
+	);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-200 to-base-300 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-1 bg-secondary rounded-full"></div>
-            <ShoppingBag className="w-8 h-8 text-primary" />
-            <div className="w-12 h-1 bg-secondary rounded-full"></div>
-          </div>
-          <h1 className="text-4xl font-bold text-primary mb-2">
-            {isSignUp ? 'Create Account' : 'Welcome Back'}
-          </h1>
-          <p className="text-neutral">
-            {isSignUp 
-              ? 'Join us and start shopping today' 
-              : 'Sign in to continue shopping'
-            }
-          </p>
-        </div>
+	const toggleAuthMode = useCallback(() => {
+		setIsSignUp((prev) => !prev);
+		reset();
+	}, [reset]);
 
-        {/* Form Card */}
-        <div className="bg-base-100 rounded-2xl shadow-xl border border-base-300/50 p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name Field (Sign Up Only) */}
-            {isSignUp && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-primary flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-base-300 rounded-xl bg-base-100 
-                           focus:border-primary focus:ring-2 focus:ring-primary/20 
-                           transition-all duration-300 text-neutral"
-                  placeholder="Enter your full name"
-                  required={isSignUp}
-                />
-              </div>
-            )}
+	const authModeText = {
+		heading: isSignUp ? "Create Account" : "Welcome Back",
+		description: isSignUp
+			? "Join us and start shopping today"
+			: "Sign in to continue shopping",
+		submitButton: isSignUp ? "Create Account" : "Sign In",
+		togglePrompt: isSignUp
+			? "Already have an account?"
+			: "Don't have an account?",
+		toggleAction: isSignUp ? "Sign In" : "Create Account",
+	};
 
-            {/* Email Field */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-primary flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                Email Address
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-base-300 rounded-xl bg-base-100 
-                         focus:border-primary focus:ring-2 focus:ring-primary/20 
-                         transition-all duration-300 text-neutral"
-                placeholder="Enter your email"
-                required
-              />
-            </div>
+	return (
+		<GradientBackground className="min-h-screen flex items-center justify-center p-4">
+			<div className="w-full max-w-md">
+				<SectionHeader
+					label={<ShoppingBag className="w-8 h-8 text-primary" />}
+					heading={authModeText.heading}
+					description={authModeText.description}
+					variant="small"
+				/>
 
-            {/* Password Field */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-primary flex items-center gap-2">
-                <Lock className="w-4 h-4" />
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 pr-12 border border-base-300 rounded-xl bg-base-100 
-                           focus:border-primary focus:ring-2 focus:ring-primary/20 
-                           transition-all duration-300 text-neutral"
-                  placeholder="Enter your password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 
-                           text-neutral hover:text-primary transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
+				<Card>
+					<CardContent padding="large">
+						<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+							<H4>{isSignUp ? "Register" : "Login"}</H4>
 
-            {/* Forgot Password Link (Login Only) */}
-            {!isSignUp && (
-              <div className="text-right">
-                <button
-                  type="button"
-                  className="text-sm text-secondary hover:text-primary transition-colors"
-                >
-                  Forgot Password?
-                </button>
-              </div>
-            )}
+							{isSignUp && (
+								<FormField
+									icon={<User className="w-4 h-4" />}
+									label="Full Name"
+									type="text"
+									name="name"
+									register={register}
+									errors={errors}
+									validation={{
+										required: isSignUp ? "Name is required" : false,
+										minLength: {
+											value: 2,
+											message: "Name must be at least 2 characters",
+										},
+									}}
+									placeholder="Enter your full name"
+								/>
+							)}
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full btn btn-primary btn-lg group border-0 shadow-lg hover:shadow-xl 
-                       disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-primary-content/30 border-t-primary-content rounded-full animate-spin"></div>
-                  Processing...
-                </div>
-              ) : (
-                <>
-                  {isSignUp ? 'Create Account' : 'Sign In'}
-                  <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
+							<FormField
+								icon={<Mail className="w-4 h-4" />}
+								label="Email Address"
+								type="email"
+								name="email"
+								register={register}
+								errors={errors}
+								validation={{
+									required: "Email is required",
+									pattern: {
+										value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+										message: "Invalid email address",
+									},
+								}}
+								placeholder="Enter your email"
+							/>
 
-            {/* Toggle Auth Mode */}
-            <div className="text-center pt-4 border-t border-base-300">
-              <p className="text-neutral">
-                {isSignUp ? 'Already have an account?' : "Don't have an account?"}
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(!isSignUp)}
-                  className="ml-2 text-secondary hover:text-primary font-medium transition-colors"
-                >
-                  {isSignUp ? 'Sign In' : 'Create Account'}
-                </button>
-              </p>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+							<PasswordField register={register} errors={errors} />
+
+							{!isSignUp && (
+								<div className="text-right">
+									<Button variant="link" type="button">
+										Forgot Password?
+									</Button>
+								</div>
+							)}
+
+							<Button
+								type="submit"
+								disabled={isLoading}
+								className={
+									"btn-block disabled:opacity-50 disabled:cursor-not-allowed"
+								}
+							>
+								{isLoading ? (
+									<div className="flex items-center gap-2">
+										<span className="loading loading-spinner loading-sm"></span>
+										Processing...
+									</div>
+								) : (
+									<>
+										{authModeText.submitButton}
+										<ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+									</>
+								)}
+							</Button>
+
+							<div className="divider text-base-content/60">
+								<p className="text-base-content/80">
+									{authModeText.togglePrompt}
+									<Button type="button" action={toggleAuthMode} variant="link">
+										{authModeText.toggleAction}
+									</Button>
+								</p>
+							</div>
+						</form>
+					</CardContent>
+				</Card>
+			</div>
+		</GradientBackground>
+	);
 };
 
 export default Login;

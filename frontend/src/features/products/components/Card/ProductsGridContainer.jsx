@@ -1,8 +1,14 @@
 import React from "react";
 import ProductCard from "./ProductCard";
-import { FlexContainer, GridContainer } from "../layouts/containers/Container";
-import { LoadingSpinner, MessageBox } from "../common/typography/LoadingComp";
-import { TextBody } from "../common/typography/Text";
+import {
+	LoadingSpinner,
+	MessageBox,
+} from "@/components/common/typography/LoadingComp";
+import {
+	FlexContainer,
+	GridContainer,
+} from "@/components/layouts/containers/Container";
+import { TextBody } from "@/components/common/typography/Text";
 
 const ProductsGridContainer = ({
 	products = [],
@@ -49,7 +55,7 @@ const ProductsGridContainer = ({
 };
 
 const LoadingBox = ({ message }) => (
-	<FlexContainer className="w-full py-16">
+	<FlexContainer className="w-full h-full py-16">
 		<FlexContainer className="flex-col gap-4">
 			<LoadingSpinner />
 			<TextBody className="font-medium">{message}</TextBody>

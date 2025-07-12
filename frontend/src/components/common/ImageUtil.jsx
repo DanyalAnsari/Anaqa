@@ -12,7 +12,7 @@ export const ImageOverlay = ({
 	};
 	return (
 		<div
-			className={`absolute inset-0 bg-gradient-to-t ${variants[variant]}  to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${className}`}
+			className={`absolute inset-0 bg-gradient-to-t ${variants[variant]} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${className}`}
 			{...props}
 		>
 			{children}
@@ -23,7 +23,7 @@ export const ImageOverlay = ({
 export const HoverImage = ({ className = "", src, alt, ...props }) => {
 	return (
 		<img
-			className={`transition-transform duration-700 hover:scale-105 ${className}`}
+			className={`w-full object-cover transition-transform duration-500 group-hover:scale-105 ${className}`}
 			src={src}
 			alt={alt}
 			{...props}
@@ -31,10 +31,17 @@ export const HoverImage = ({ className = "", src, alt, ...props }) => {
 	);
 };
 
-export const ProductImage = ({ className = "", src, alt, ...props }) => {
+export const ProductImage = ({
+	className = "",
+	src,
+	alt,
+	height = "h-64",
+	width = "w-full",
+	...props
+}) => {
 	return (
 		<img
-			className={`w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 ${className}`}
+			className={`${width} ${height} rounded-lg object-cover transition-transform duration-500 group-hover:scale-110 ${className}`}
 			src={src}
 			alt={alt}
 			{...props}
