@@ -11,6 +11,7 @@ import Product from "@/pages/Product";
 import AppLayouts from "@/components/layouts/AppLayout";
 import NotFoundPage from "@/pages/NotFoundPage";
 import Verify from "@/pages/Verify";
+import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 
 const Routes = [
 	{
@@ -22,11 +23,39 @@ const Routes = [
 			{ path: "/contact", element: <Contact /> },
 			{ path: "/products", element: <Collection /> },
 			{ path: "products/:id", element: <Product /> },
-			{ path: "/cart", element: <Cart /> },
 			{ path: "/auth", element: <Auth /> },
-			{ path: "/orders", element: <Orders /> },
-			{ path: "/checkout", element: <PlaceOrders /> },
-			{ path: "/verify", element: <Verify /> },
+			{
+				path: "/cart",
+				element: (
+					<ProtectedRoute>
+						<Cart />
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/orders",
+				element: (
+					<ProtectedRoute>
+						<Orders />
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/checkout",
+				element: (
+					<ProtectedRoute>
+						<PlaceOrders />
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/verify",
+				element: (
+					<ProtectedRoute>
+						<Verify />
+					</ProtectedRoute>
+				),
+			},
 			{ path: "*", element: <NotFoundPage /> },
 		],
 	},
