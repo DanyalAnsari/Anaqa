@@ -12,7 +12,7 @@ const Menu = () => {
 						className="flex flex-col items-center gap-1 font-medium"
 					>
 						{label}
-						<hr className="w-1/2 border-none h-[1.5px] bg-gray-700 hidden" />
+						<hr className="w-1/2 border-none h-[1.5px] bg-primary hidden" />
 					</NavLinkComp>
 				</li>
 			))}
@@ -22,7 +22,7 @@ const Menu = () => {
 
 export const MobileMenu = () => {
 	return (
-		<div className="dropdown">
+		<div className="dropdown dropdown-start">
 			<div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +41,7 @@ export const MobileMenu = () => {
 			</div>
 			<ul
 				tabIndex={0}
-				className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+				className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[100] mt-3 md:w-52 p-2 shadow"
 			>
 				{constants.menu.map(({ path, label }) => (
 					<li key={path}>
