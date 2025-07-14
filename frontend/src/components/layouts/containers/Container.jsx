@@ -75,7 +75,7 @@ export const SectionContainer = ({
 }) => {
 	const sizeClasses = {
 		large: "py-20",
-		medium: "py-16",
+		medium: "py-16 md:py-20",
 		small: "py-12",
 		minimal: "py-8",
 	};
@@ -102,6 +102,7 @@ export const GridContainer = ({
 		list: "grid grid-cols-1 max-w-4xl gap-6",
 		two: "grid grid-cols-1 lg:grid-cols-2 gap-6",
 		three: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+		four:"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12"
 	};
 
 	return (

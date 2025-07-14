@@ -13,7 +13,6 @@ const AppLayout = () => {
 				<Outlet />
 			</main>
 			<NewsLetterBox />
-			<Footer />
 		</LayoutContainer>
 	);
 };
