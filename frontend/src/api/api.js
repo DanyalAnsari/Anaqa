@@ -4,13 +4,17 @@ import toast from "react-hot-toast";
 
 const baseQuery = fetchBaseQuery({
 	baseUrl: `${import.meta.env.VITE_API_URL}/api`,
-	credentials: "include", // Important for cookies
+	credentials: "include",
 	prepareHeaders: (headers, { getState }) => {
 		const RootState = getState();
 		const { token } = RootState.auth;
 
 		if (token) {
 			headers.set("Authorization", `Bearer ${token}`);
+		}
+
+		if (import.meta.env.PROD) {
+			headers.set("Origin", "https://your-frontend.com");
 		}
 		headers.set("Content-Type", "application/json");
 
@@ -29,10 +33,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 				api,
 				extraOptions
 			);
-			if (refreshResult.error?.status === 401) {
-				toast.error("Session expired! Login again");
-			}
-			
 			const token = refreshResult.data?.token;
 
 			if (token) {

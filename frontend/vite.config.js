@@ -14,6 +14,19 @@ export default defineConfig({
 			"@": path.resolve(__dirname, "./src"),
 		},
 	},
+	server: {
+		port: 3000,
+		proxy: {
+			"/api": {
+				target: "https://your-backend.com",
+				changeOrigin: true,
+				secure: true,
+				cookieDomainRewrite: {
+					"*": "localhost",
+				},
+			},
+		},
+	},
 	base: "/",
 	build: {
 		outDir: "./dist",
