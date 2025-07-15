@@ -39,7 +39,7 @@ const appSecurity = (app) => {
 				}
 				callback(new Error("Not allowed by CORS"));
 			},
-			// Allow credentials (cookies) to be sent with requests
+
 			credentials: true,
 		})
 	);

@@ -29,7 +29,7 @@ export const registerUserController = ControllerErrorHandler(
 export const tokenRefreshController = ControllerErrorHandler(
 	async (req, res, next) => {
 		const { refreshToken } = req.cookies;
-		console.log(req.cookies);
+		console.log("outside TryCatch:", refreshToken);
 
 		try {
 			const { accessToken, newRefreshToken } = await TokenRefreshService(
@@ -39,8 +39,8 @@ export const tokenRefreshController = ControllerErrorHandler(
 			res.cookie("refreshToken", newRefreshToken, {
 				httpOnly: true,
 				secure: NODE_ENV === "production",
-				sameSite: NODE_ENV === "production" ? "none" : "lax",
-				maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+				sameSite: "none",
+				maxAge: 7 * 24 * 60 * 60 * 1000,
 			});
 
 			return { token: { accessToken, expiresIn: ACCESS_TOKEN_EXPIRY } };
