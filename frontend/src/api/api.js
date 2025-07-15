@@ -1,24 +1,59 @@
+import { logout, setToken } from "@/features/auth/authSlice";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import toast from "react-hot-toast";
 
-// Create a base API with common settings
+const baseQuery = fetchBaseQuery({
+	baseUrl: `${import.meta.env.VITE_API_URL}/api`,
+	credentials: "include", // Important for cookies
+	prepareHeaders: (headers, { getState }) => {
+		const RootState = getState();
+		const { token } = RootState.auth;
+
+		if (token) {
+			headers.set("Authorization", `Bearer ${token}`);
+		}
+		headers.set("Content-Type", "application/json");
+
+		return headers;
+	},
+});
+
+const baseQueryWithReauth = async (args, api, extraOptions) => {
+	let result = await baseQuery(args, api, extraOptions);
+
+	// If 401, try refreshing token
+	if (result.error?.status === 401) {
+		try {
+			const refreshResult = await baseQuery(
+				{ url: "/auth/refresh", method: "GET" },
+				api,
+				extraOptions
+			);
+			if (refreshResult.error?.status === 401) {
+				toast.error("Session expired! Login again");
+			}
+			
+			const token = refreshResult.data?.token;
+
+			if (token) {
+				api.dispatch(setToken(token));
+				result = await baseQuery(args, api, extraOptions);
+			} else {
+				api.dispatch(logout());
+			}
+		} catch (error) {
+			console.log(error);
+			if (error?.status === 401) {
+				toast.error("Session expired! Login again");
+			}
+		}
+	}
+	return result;
+};
+
 const baseApi = createApi({
 	reducerPath: "api",
-	baseQuery: fetchBaseQuery({
-		baseUrl: `${import.meta.env.VITE_API_URL}/api`,
-		prepareHeaders: (headers) => {
-			// Get the token from localStorage
-			const token = localStorage.getItem("token");
-
-			// If token exists, add it to the headers
-			if (token) {
-				headers.set("Authorization", `Bearer ${token}`);
-			}
-
-			headers.set("Content-Type", "application/json");
-			return headers;
-		},
-		credentials: "omit", // Important for cookies
-	}),
+	baseQuery: baseQueryWithReauth,
 	endpoints: () => ({}),
 	tagTypes: ["User", "Cart", "Product", "Order"],
 });

@@ -1,10 +1,8 @@
-import baseApi from "../../api/api";
-import { login as loginAction } from "@/features/auth/authSlice";
+import baseApi from "@/api/api";
+import { login as loginAction, logout } from "@/features/auth/authSlice";
 
-// Define auth-related API endpoints
 export const authApi = baseApi.injectEndpoints({
 	endpoints: (builder) => ({
-		// Login user
 		login: builder.mutation({
 			query: (credentials) => ({
 				url: "/auth/signin",
@@ -27,7 +25,6 @@ export const authApi = baseApi.injectEndpoints({
 			},
 			invalidatesTags: ["User"],
 		}),
-
 		// Register user
 		register: builder.mutation({
 			query: (userData) => ({
@@ -51,18 +48,25 @@ export const authApi = baseApi.injectEndpoints({
 			},
 			invalidatesTags: ["User"],
 		}),
+
+		logout: builder.query({
+			query: () => "auth/logout",
+			onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
+				try {
+					const { data } = await queryFulfilled;
+
+					if (data) {
+						dispatch(logout());
+						dispatch(baseApi.util.resetApiState());
+					}
+				} catch (error) {
+					console.error("Registration failed:", error);
+				}
+			},
+		}),
 	}),
 });
 
 // Export hooks for usage in components
-export const { useLoginMutation, useRegisterMutation } = authApi;
-
-// Helper functions for auth
-export const authHelpers = {
-	logout: () => {
-		localStorage.removeItem("token");
-		localStorage.removeItem("user");
-		// Force refresh cached queries
-		baseApi.util.resetApiState();
-	},
-};
+export const { useLoginMutation, useRegisterMutation, useLazyLogoutQuery } =
+	authApi;

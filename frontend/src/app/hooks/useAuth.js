@@ -1,21 +1,19 @@
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
 	selectIsAuthenticated,
-	logout as logoutAction,
 	selectUser,
 	selectToken,
 } from "@/features/auth/authSlice";
 import {
-	authHelpers,
 	useLoginMutation,
+	useLazyLogoutQuery, // Using lazy query for GET request
 	useRegisterMutation,
 } from "@/features/auth/authApi";
 import toast from "react-hot-toast";
 
 export const useAuth = () => {
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
 	const isAuthenticated = useSelector(selectIsAuthenticated);
 	const user = useSelector(selectUser);
 	const token = useSelector(selectToken);
@@ -23,6 +21,7 @@ export const useAuth = () => {
 	const [loginMutation, { isLoading: isLoginLoading }] = useLoginMutation();
 	const [registerMutation, { isLoading: isRegisterLoading }] =
 		useRegisterMutation();
+	const [triggerLogout, { isLoading: isLoggingOut }] = useLazyLogoutQuery(); // Using lazy query
 
 	const handleLogin = async (data) => {
 		try {
@@ -43,7 +42,6 @@ export const useAuth = () => {
 
 	const handleRegister = async (data) => {
 		try {
-			// This stores token via onQueryStarted but not user data
 			const response = await registerMutation({
 				name: data.name,
 				email: data.email,
@@ -60,11 +58,19 @@ export const useAuth = () => {
 			throw error;
 		}
 	};
-	const handleLogout = () => {
-		dispatch(logoutAction());
-		authHelpers.logout();
-		navigate("/", { replace: true });
-		toast.success("Logged out successfully!");
+
+	const handleLogout = async () => {
+		try {
+			toast.loading("Logging out...");
+			await triggerLogout(); // Execute the GET request
+			toast.success("Logged out successfully!");
+			navigate("/", { replace: true });
+		} catch (error) {
+			toast.dismiss();
+			const errorMessage = error.data?.msg || error.message || "Logout failed!";
+			toast.error(errorMessage);
+			throw error;
+		}
 	};
 
 	return {
@@ -73,7 +79,8 @@ export const useAuth = () => {
 		handleLogout,
 		isLoginLoading,
 		isRegisterLoading,
-		isLoading: isLoginLoading || isRegisterLoading,
+		isLoggingOut,
+		isLoading: isLoginLoading || isRegisterLoading || isLoggingOut,
 		isAuthenticated,
 		user,
 		token,

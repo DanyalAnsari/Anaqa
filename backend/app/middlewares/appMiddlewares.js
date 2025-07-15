@@ -3,10 +3,12 @@ import compression from "compression";
 import morgan from "morgan";
 import favicon from "serve-favicon";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 const appMiddlewares = (app) => {
 	// Middleware for parsing JSON bodies
 	app.use(express.json({ limit: "10kb" }));
+	app.use(cookieParser());
 
 	// Middleware for parsing URL-encoded bodies
 	app.use(express.urlencoded({ extended: true, limit: "10kb" }));

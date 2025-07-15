@@ -20,7 +20,7 @@ export const GenTokenService = (userId) => {
 export const TokenRefreshService = async (refreshToken) => {
 	try {
 		if (!refreshToken) {
-			throw UnauthorizedException();
+			throw new UnauthorizedException('Login again');
 		}
 
 		const decoded = jwt.verify(refreshToken, JWT_SECRET);

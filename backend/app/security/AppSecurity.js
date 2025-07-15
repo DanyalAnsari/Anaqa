@@ -63,7 +63,7 @@ const appSecurity = (app) => {
 			// Set the time window to 15 minutes
 			windowMs: 15 * 60 * 1000,
 			// Set the maximum number of requests to 100
-			max: 50,
+			max: 100,
 		})
 	);
 	// // HPP middleware

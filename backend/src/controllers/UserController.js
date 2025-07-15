@@ -1,6 +1,11 @@
 import { ACCESS_TOKEN_EXPIRY, NODE_ENV } from "#config/appConfig";
+import UserRepository from "#repository/UserRepo";
 import { GenTokenService, TokenRefreshService } from "#services/AuthServices";
 import { Authenticate, RegisterUser } from "#services/UserService";
+import {
+	BadRequestException,
+	UnauthorizedException,
+} from "#utils/errors/Exceptions";
 import ControllerErrorHandler from "#utils/helpers/ControllerErrorHandler";
 
 export const registerUserController = ControllerErrorHandler(
@@ -29,7 +34,6 @@ export const registerUserController = ControllerErrorHandler(
 export const tokenRefreshController = ControllerErrorHandler(
 	async (req, res, next) => {
 		const { refreshToken } = req.cookies;
-
 		try {
 			const { accessToken, newRefreshToken } = await TokenRefreshService(
 				refreshToken
@@ -71,5 +75,13 @@ export const userLoginController = ControllerErrorHandler(
 		});
 
 		return { message: "User signed in successfully", data };
+	}
+);
+
+export const userLogoutController = ControllerErrorHandler(
+	async (req, res, next) => {
+		res.clearCookie("refreshToken");
+
+		return { message: "Logged out successfully" };
 	}
 );
