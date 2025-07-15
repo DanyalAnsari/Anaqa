@@ -1,10 +1,9 @@
 import UserRepository from "#repository/UserRepo";
-import { GenToken } from "#utils/helpers/GenToken";
 import { BadRequestException } from "#utils/errors/Exceptions";
 
 export const RegisterUser = async (userData) => {
 	try {
-		const { email, password } = userData;
+		const { name, email, password } = userData;
 
 		if (!email || !password) {
 			throw new BadRequestException("Invalid data sent by user");
@@ -15,30 +14,27 @@ export const RegisterUser = async (userData) => {
 			throw new BadRequestException("User with this email already exist");
 		}
 
-		const newUser = await UserRepository.registerUser(userData);
-
-		const TOKEN = GenToken({
-			id: newUser._id,
-			email: newUser.email,
+		const newUser = await UserRepository.registerUser({
+			name,
+			email,
+			password,
 		});
 
-		return {
-			user: {
-				name: newUser.name,
-				email: newUser.email,
-				id: newUser._id,
-			},
-			token: TOKEN,
+		const user = {
+			name: newUser.name,
+			email: newUser.email,
+			id: newUser._id,
 		};
-
+		return user;
 	} catch (error) {
 		throw error;
 	}
 };
 
-export const UserLogin = async (userData) => {
+export const Authenticate = async (userData) => {
 	try {
 		const { email, password } = userData;
+
 		if (!email || !password) {
 			throw new BadRequestException("Invalid data sent by user");
 		}
@@ -54,19 +50,13 @@ export const UserLogin = async (userData) => {
 			throw new BadRequestException("invalid password, Please try again");
 		}
 
-		const TOKEN = GenToken({
-			id: userExist._id,
+		const user = {
+			name: userExist.name,
 			email: userExist.email,
-		});
-
-		return {
-			user: {
-				name: userExist.name,
-				email: userExist.email,
-				id: userExist._id,
-			},
-			token: TOKEN,
+			id: userExist._id,
 		};
+
+		return user;
 	} catch (error) {
 		throw error;
 	}

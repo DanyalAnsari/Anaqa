@@ -57,6 +57,15 @@ const appSecurity = (app) => {
 		})
 	);
 
+	app.use(
+		"/api/auth",
+		rateLimit({
+			// Set the time window to 15 minutes
+			windowMs: 15 * 60 * 1000,
+			// Set the maximum number of requests to 100
+			max: 50,
+		})
+	);
 	// // HPP middleware
 	app.use(hpp());
 
