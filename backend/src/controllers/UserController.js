@@ -19,7 +19,6 @@ export const registerUserController = ControllerErrorHandler(
 			httpOnly: true,
 			secure: NODE_ENV === "production",
 			sameSite: NODE_ENV === "production" ? "none" : "lax",
-			domain: NODE_ENV === "production" ? `${FRONTEND_URL}` : undefined,
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
 
@@ -41,7 +40,6 @@ export const tokenRefreshController = ControllerErrorHandler(
 				httpOnly: true,
 				secure: NODE_ENV === "production",
 				sameSite: NODE_ENV === "production" ? "none" : "lax",
-				domain: NODE_ENV === "production" ? `${FRONTEND_URL}` : undefined,
 				maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 			});
 
@@ -70,7 +68,7 @@ export const userLoginController = ControllerErrorHandler(
 			httpOnly: true,
 			secure: NODE_ENV === "production",
 			sameSite: NODE_ENV === "production" ? "none" : "lax",
-			domain: NODE_ENV === "production" ? `${FRONTEND_URL}` : undefined,
+
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
 
