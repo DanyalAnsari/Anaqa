@@ -15,6 +15,7 @@ export const PORT = process.env.PORT || 5000;
 export const NODE_ENV = process.env.NODE_ENV || "development";
 export const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5000";
 export const MONGO_DB_URI = process.env.MONGO_DB_URI;
+export const MONGO_DB_NAME = process.env.MONGO_DB_NAME;
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || "15m";
 export const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || "7d";
