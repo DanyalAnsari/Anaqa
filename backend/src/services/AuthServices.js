@@ -8,10 +8,10 @@ import { UnauthorizedException } from "#utils/errors/Exceptions";
 
 export const GenTokenService = (userId) => {
 	const accessToken = jwt.sign({ id: userId }, JWT_SECRET, {
-		expiresIn: ACCESS_TOKEN_EXPIRY,
+		expiresIn: parseInt(ACCESS_TOKEN_EXPIRY),
 	});
 	const refreshToken = jwt.sign({ id: userId }, JWT_SECRET, {
-		expiresIn: REFRESH_TOKEN_EXPIRY,
+		expiresIn: parseInt(REFRESH_TOKEN_EXPIRY),
 	});
 
 	return { accessToken, refreshToken };
@@ -20,7 +20,7 @@ export const GenTokenService = (userId) => {
 export const TokenRefreshService = async (refreshToken) => {
 	try {
 		if (!refreshToken) {
-			throw new UnauthorizedException('Login again');
+			throw new UnauthorizedException("Login again");
 		}
 
 		const decoded = jwt.verify(refreshToken, JWT_SECRET);

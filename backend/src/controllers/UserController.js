@@ -1,11 +1,6 @@
 import { ACCESS_TOKEN_EXPIRY, NODE_ENV } from "#config/appConfig";
-import UserRepository from "#repository/UserRepo";
 import { GenTokenService, TokenRefreshService } from "#services/AuthServices";
 import { Authenticate, RegisterUser } from "#services/UserService";
-import {
-	BadRequestException,
-	UnauthorizedException,
-} from "#utils/errors/Exceptions";
 import ControllerErrorHandler from "#utils/helpers/ControllerErrorHandler";
 
 export const registerUserController = ControllerErrorHandler(
