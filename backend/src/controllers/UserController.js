@@ -29,6 +29,8 @@ export const registerUserController = ControllerErrorHandler(
 export const tokenRefreshController = ControllerErrorHandler(
 	async (req, res, next) => {
 		const { refreshToken } = req.cookies;
+		console.log(req.cookies);
+		
 		try {
 			const { accessToken, newRefreshToken } = await TokenRefreshService(
 				refreshToken
