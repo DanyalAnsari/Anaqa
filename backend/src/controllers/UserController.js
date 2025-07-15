@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_EXPIRY, NODE_ENV } from "#config/appConfig";
+import { ACCESS_TOKEN_EXPIRY, NODE_ENV, FRONTEND_URL } from "#config/appConfig";
 import { GenTokenService, TokenRefreshService } from "#services/AuthServices";
 import { Authenticate, RegisterUser } from "#services/UserService";
 import ControllerErrorHandler from "#utils/helpers/ControllerErrorHandler";
@@ -18,7 +18,8 @@ export const registerUserController = ControllerErrorHandler(
 		res.cookie("refreshToken", refreshToken, {
 			httpOnly: true,
 			secure: NODE_ENV === "production",
-			sameSite: "strict",
+			sameSite: NODE_ENV === "production" ? "none" : "lax",
+			domain: NODE_ENV === "production" ? `${FRONTEND_URL}` : undefined,
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
 
@@ -30,7 +31,7 @@ export const tokenRefreshController = ControllerErrorHandler(
 	async (req, res, next) => {
 		const { refreshToken } = req.cookies;
 		console.log(req.cookies);
-		
+
 		try {
 			const { accessToken, newRefreshToken } = await TokenRefreshService(
 				refreshToken
@@ -39,7 +40,8 @@ export const tokenRefreshController = ControllerErrorHandler(
 			res.cookie("refreshToken", newRefreshToken, {
 				httpOnly: true,
 				secure: NODE_ENV === "production",
-				sameSite: "strict",
+				sameSite: NODE_ENV === "production" ? "none" : "lax",
+				domain: NODE_ENV === "production" ? `${FRONTEND_URL}` : undefined,
 				maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 			});
 
@@ -67,7 +69,8 @@ export const userLoginController = ControllerErrorHandler(
 		res.cookie("refreshToken", refreshToken, {
 			httpOnly: true,
 			secure: NODE_ENV === "production",
-			sameSite: "strict",
+			sameSite: NODE_ENV === "production" ? "none" : "lax",
+			domain: NODE_ENV === "production" ? `${FRONTEND_URL}` : undefined,
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
 
