@@ -3,11 +3,13 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import sanitizeInput from "#middlewares/SanitizeInput";
-import { FRONTEND_URL } from "#config/appConfig";
+import { FRONTEND_URL, NODE_ENV } from "#config/appConfig";
 
 const appSecurity = (app) => {
 	// Disable the `X-Powered-By` header which could give away information about the framework and its version.
 	app.disable("x-powered-by");
+	app.set("trust proxy", NODE_ENV === "production" ? true : false);
+	app.set("trust proxy", 2);
 
 	// // Helmet helps protect against common web exploits
 	app.use(helmet());
@@ -54,6 +56,7 @@ const appSecurity = (app) => {
 			// Set the headers to be returned with the rate limit
 			standardHeaders: true,
 			legacyHeaders: false,
+			trustProxy: true,
 		})
 	);
 

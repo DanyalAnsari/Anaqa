@@ -19,19 +19,13 @@ export const GenTokenService = (userId) => {
 
 export const TokenRefreshService = async (refreshToken) => {
 	try {
-		console.log("inside Service:", refreshToken);
-
 		if (!refreshToken) {
-			console.log("inside if Block:", refreshToken);
-
 			throw new UnauthorizedException("Login again");
 		}
 
 		const decoded = jwt.verify(refreshToken, JWT_SECRET);
-		console.log("decoded:", decoded);
 
 		if (decoded) {
-			console.log("decoded if block:", decoded);
 			const { accessToken, refreshToken } = GenTokenService(decoded.id);
 			return { accessToken, newRefreshToken: refreshToken };
 		}
