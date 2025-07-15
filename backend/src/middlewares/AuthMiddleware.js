@@ -7,19 +7,16 @@ import {
 } from "#utils/errors/Exceptions";
 
 export const AuthMiddleware = async (req, res, next) => {
+	const { authorization } = req.headers;
 	try {
-		if (
-			!req.headers.authorization ||
-			!req.headers.authorization.startsWith("Bearer")
-		) {
-			throw new UnauthorizedException("No auth Token is provided");
-		}
-		const Token = req.headers.authorization.split(" ")[1];
+		const Token = authorization?.split(" ")[1];
 
 		if (!Token) {
+			throw new UnauthorizedException("No auth Token is provided");
 		}
 
 		const isTokenValid = jwt.verify(Token, JWT_SECRET);
+
 		if (!isTokenValid) {
 			throw new BadRequestException("Invalid authentication token");
 		}
@@ -40,8 +37,6 @@ export const AuthMiddleware = async (req, res, next) => {
 				error = new BadRequestException("Invalid token");
 			}
 		}
-
-		// Pass the error to Express's error handling middleware
 		next(error);
 	}
 };
