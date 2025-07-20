@@ -154,15 +154,17 @@ const About = () => {
 								label: "Free Shipping Available",
 							},
 							{
-								icon: <Shield className="w-4 h-4 text-info" />,
+								icon: <Shield className="w-4 h-4 text-neutral" />,
 								label: "Secure Payment",
 							},
-							{ icon: Award, label: "Quality Guaranteed" },
-						].map(({ icon, label }, index) => (
+							{
+								icon: <Award className="w-4 h-4 text-warning" />,
+								label: "Quality Guaranteed",
+							},
+						].map((item, index) => (
 							<div key={index} className="flex items-center gap-2">
-								{icon}
-								<Award className="w-4 h-4 text-warning" />
-								<span>{label}</span>
+								{item.icon}
+								<span>{item.label}</span>
 							</div>
 						))}
 					</FlexContainer>
