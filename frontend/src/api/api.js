@@ -14,7 +14,7 @@ const baseQuery = fetchBaseQuery({
 		}
 
 		if (import.meta.env.PROD) {
-			headers.set("Origin", "https://your-frontend.com");
+			headers.set("Origin", "https://anaqa-two.vercel.app");
 		}
 		headers.set("Content-Type", "application/json");
 

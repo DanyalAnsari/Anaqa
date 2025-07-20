@@ -18,7 +18,7 @@ const Profile = () => {
 				title="Account Menu"
 			>
 				{isAuthenticated ? (
-					<Avatar>{user.name.charAt(0)}</Avatar>
+					<Avatar>{user?.name?.charAt(0)}</Avatar>
 				) : (
 					<User className="w-5 h-5" />
 				)}
@@ -30,18 +30,21 @@ const Profile = () => {
 				<li className="menu-title">
 					<span>Account</span>
 				</li>
-				{/* <li>
-					<a className="flex justify-between items-center hover:bg-base-200">
+				<li>
+					<NavLinkComp
+						to={"/profile"}
+						className="flex justify-between items-center"
+					>
 						<span>Profile</span>
 						<span className="badge badge-secondary badge-xs">New</span>
-					</a>
-				</li> */}
+					</NavLinkComp>
+				</li>
 				<li>
 					<NavLinkComp to={"/orders"} className="hover:bg-base-200">
 						My Orders
 					</NavLinkComp>
 				</li>
-{/* 
+				{/* 
 				<li>
 					<a className="hover:bg-base-200">Wishlist</a>
 				</li>

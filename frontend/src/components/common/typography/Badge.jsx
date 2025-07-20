@@ -41,6 +41,7 @@ export const CategoryTag = ({ className = "", children, ...props }) => {
 export const StatusBadge = ({
 	className = "",
 	type = "info",
+	text = "text-xs",
 	children,
 	...props
 }) => {
@@ -57,7 +58,7 @@ export const StatusBadge = ({
 
 	return (
 		<span
-			className={`badge px-4 py-2 font-medium text-xs ${typeClasses[type]} ${className}`}
+			className={`badge px-4 py-2 font-medium ${text} ${typeClasses[type]} ${className}`}
 			{...props}
 		>
 			{children}

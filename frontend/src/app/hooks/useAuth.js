@@ -61,8 +61,7 @@ export const useAuth = () => {
 
 	const handleLogout = async () => {
 		try {
-			toast.loading("Logging out...");
-			await triggerLogout(); // Execute the GET request
+			await triggerLogout();
 			toast.success("Logged out successfully!");
 			navigate("/", { replace: true });
 		} catch (error) {
