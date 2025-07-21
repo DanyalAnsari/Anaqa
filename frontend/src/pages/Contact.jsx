@@ -83,6 +83,7 @@ const Contact = () => {
 							},
 						].map((item, index) => (
 							<Card
+								key={index}
 								interactive={false}
 								className="text-center p-6 hover:border-primary/20"
 							>
