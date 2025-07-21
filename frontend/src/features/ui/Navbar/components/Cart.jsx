@@ -14,6 +14,8 @@ const Cart = () => {
 	const navigate = useNavigate();
 	const { totalQuantity, items, totalValue } = useCart();
 	const { isAuthenticated } = useAuth();
+	console.log(totalQuantity);
+	
 
 	return (
 		<div className="dropdown dropdown-end">
@@ -80,6 +82,7 @@ const Cart = () => {
 						<Button
 							className="btn-sm flex-1"
 							action={() => navigate("/checkout")}
+							disabled={isAuthenticated && totalQuantity <= 0}
 						>
 							Checkout
 						</Button>

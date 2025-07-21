@@ -53,7 +53,7 @@ export const useAuth = () => {
 			return response;
 		} catch (error) {
 			const errorMessage =
-				error.data?.msg || error.message || "Registration failed!";
+				error.data?.message || error.message || "Registration failed!";
 			toast.error(errorMessage);
 			throw error;
 		}

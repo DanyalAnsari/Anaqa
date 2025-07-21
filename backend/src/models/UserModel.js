@@ -40,10 +40,6 @@ const userSchema = new mongoose.Schema(
 			},
 			default: "Customer",
 		},
-		cartData: {
-			type: Object,
-			default: {},
-		},
 	},
 	{ minimize: false }
 );
@@ -65,7 +61,7 @@ async function comparePassword(candidatePassword) {
 	}
 
 	if (!this.password) {
-		return false; 
+		return false;
 	}
 
 	try {

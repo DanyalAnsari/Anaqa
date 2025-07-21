@@ -1,12 +1,17 @@
-import { ACCESS_TOKEN_EXPIRY, NODE_ENV, FRONTEND_URL } from "#config/appConfig";
+import { ACCESS_TOKEN_EXPIRY, NODE_ENV } from "#config/appConfig";
 import { GenTokenService, TokenRefreshService } from "#services/AuthServices";
+import { CreateNewCartService } from "#services/CartService";
 import { Authenticate, RegisterUser } from "#services/UserService";
 import ControllerErrorHandler from "#utils/helpers/ControllerErrorHandler";
 
 export const registerUserController = ControllerErrorHandler(
 	async (req, res, next) => {
 		const { name, email, password } = req.body;
+
 		const user = await RegisterUser({ name, email, password });
+		console.log(user);
+
+		await CreateNewCartService(user.id);
 
 		const { accessToken, refreshToken } = GenTokenService(user.id);
 

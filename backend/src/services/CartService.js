@@ -95,7 +95,7 @@ export const UpdateProductInCartService = async ({
 	}
 };
 
-export const RemoveFromCartService = async ({userId, productId, size}) => {
+export const RemoveFromCartService = async ({ userId, productId, size }) => {
 	try {
 		const cart = await Cart.findOne({ user: userId });
 
@@ -142,6 +142,21 @@ export const ClearUsersCartService = async ({ userId }) => {
 		const clearCart = await CartRepository.update(cart._id, { items: [] });
 
 		return clearCart;
+	} catch (error) {
+		throw error;
+	}
+};
+
+export const CreateNewCartService = async (userId) => {
+	try {
+		console.log(userId);
+		
+		if (!userId) {
+			throw new BadRequestException("user ID missing");
+		}
+		const cart = await CartRepository.create({ user: userId, items: [] });
+
+		return cart;
 	} catch (error) {
 		throw error;
 	}
